@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Composer while replying</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+.bubble{position:relative;border-radius:20px;padding:9px 14px;font-size:17px;line-height:22px;max-width:264px;box-sizing:border-box}
+.tail{position:absolute;bottom:0;width:20px;height:18px}
+.tail-cut{position:absolute;bottom:0;width:10px;height:20px}
+</style>
+</helmet>
+<div style="width: 402px; height: 874px; box-sizing: border-box; display: flex; flex-direction: column; background: {{c.bg}}; color: {{c.label}}; font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif; overflow: hidden">
+  <header style="display: flex; align-items: flex-start; justify-content: space-between; padding: 54px 16px 0 16px; height: 137px; box-sizing: border-box">
+    <button aria-label="Back" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; justify-content: center; padding: 0">
+      <svg width="12" height="20" viewBox="0 0 12 20" aria-hidden="true"><path d="M10 2 2 10l8 8" fill="none" stroke="{{c.label}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+    <div style="display: flex; flex-direction: column; align-items: center">
+      <div style="width: 56px; height: 56px; border-radius: 28px; background: linear-gradient(180deg, #A5ABB9, #858994); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600">A</div>
+      <div style="height: 30px; padding: 0 15px; border-radius: 15px; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; font-size: 16px; line-height: 21px; font-weight: 700; margin-top: -4px">Alice</div>
+    </div>
+    <button aria-label="FaceTime" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; justify-content: center; padding: 0">
+      <svg width="22" height="14" viewBox="0 0 22 14" aria-hidden="true"><rect x="1" y="1" width="13" height="12" rx="3" fill="none" stroke="{{c.label}}" stroke-width="1.8"></rect><path d="m15 5 6-3v10l-6-3z" fill="none" stroke="{{c.label}}" stroke-width="1.8" stroke-linejoin="round"></path></svg>
+    </button>
+  </header>
+
+  <main style="flex-grow: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; padding: 0 16px 12px 16px">
+    <div style="align-self: flex-end; background: #0088FF; color: #FFFFFF" class="bubble">
+      <div style="position: relative; z-index: 1">Yes! 12:30 at the usual place?</div>
+      <span class="tail" style="right: -7px; background: #0088FF; border-bottom-left-radius: 16px 14px"></span>
+      <span class="tail-cut" style="right: -10px; background: {{c.bg}}; border-bottom-left-radius: 10px"></span>
+    </div>
+    <div style="align-self: flex-start; margin-top: 6px; background: {{c.friend}}" class="bubble">
+      <div style="position: relative; z-index: 1">Can we push it to 1? I have a call until 12:45.</div>
+      <span class="tail" style="left: -7px; background: {{c.friend}}; border-bottom-right-radius: 16px 14px"></span>
+      <span class="tail-cut" style="left: -10px; background: {{c.bg}}; border-bottom-right-radius: 10px"></span>
+    </div>
+  </main>
+
+  <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 16px 8px 16px">
+    <div role="group" aria-label="Replying to Alice" style="height: 52px; border-radius: 26px; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; gap: 8px; padding: 0 4px 0 16px; box-sizing: border-box">
+      <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column">
+        <span style="font-size: 13px; line-height: 18px; font-weight: 600">Replying to Alice</span>
+        <span style="font-size: 15px; line-height: 20px; color: {{c.quoteText}}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Can we push it to 1? I have a call until 12:45.</span>
+      </div>
+      <button aria-label="Cancel reply" style="width: 44px; height: 44px; flex-shrink: 0; border: none; background: transparent; display: flex; align-items: center; justify-content: center; padding: 0">
+        <span style="width: 30px; height: 30px; border-radius: 15px; background: {{c.fill}}; display: flex; align-items: center; justify-content: center">
+          <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="m1 1 8 8M9 1 1 9" stroke="{{c.secondary}}" stroke-width="1.8" stroke-linecap="round"></path></svg>
+        </span>
+      </button>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px; height: 44px">
+      <button aria-label="Add" style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 22px; border: none; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; justify-content: center; padding: 0">
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2v14M2 9h14" stroke="{{c.label}}" stroke-width="2" stroke-linecap="round"></path></svg>
+      </button>
+      <label style="flex-grow: 1; height: 43px; border-radius: 21.5px; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box; gap: 8px">
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Message</span>
+        <span aria-hidden="true" style="width: 2px; height: 19px; border-radius: 1px; background: #0091FF"></span>
+        <input placeholder="Message" style="flex-grow: 1; min-width: 0; border: none; background: transparent; font: inherit; font-size: 16px; line-height: 19px; color: {{c.label}}; outline: none">
+        <svg width="12" height="18" viewBox="0 0 12 18" aria-hidden="true"><rect x="3" y="1" width="6" height="10" rx="3" fill="none" stroke="{{c.placeholder}}" stroke-width="1.6"></rect><path d="M1 8a5 5 0 0 0 10 0M6 13v4" fill="none" stroke="{{c.placeholder}}" stroke-width="1.6" stroke-linecap="round"></path></svg>
+      </label>
+    </div>
+  </div>
+
+  <div aria-label="Keyboard area" style="height: 336px; flex-shrink: 0; background: {{c.keyboard}}; display: flex; align-items: center; justify-content: center; font-size: 13px; color: {{c.secondary}}">Keyboard</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const c = dark ? {
+      bg: '#000000', label: '#FFFFFF', secondary: 'rgba(235,235,245,0.6)', quoteText: 'rgba(235,235,245,0.78)',
+      friend: '#262629', placeholder: 'rgba(235,235,245,0.4)', fill: 'rgba(120,120,128,0.36)', keyboard: '#1C1C1E',
+      glass: '#1C1C1E', glassShadow: '0 0 0 0.5px rgba(255,255,255,0.12), 0 4px 16px rgba(0,0,0,0.4)'
+    } : {
+      bg: '#FFFFFF', label: '#000000', secondary: 'rgba(60,60,67,0.6)', quoteText: 'rgba(60,60,67,0.78)',
+      friend: '#E9E9EA', placeholder: 'rgba(60,60,67,0.4)', fill: 'rgba(120,120,128,0.16)', keyboard: '#D1D3D9',
+      glass: '#FAFAFA', glassShadow: '0 0 0 0.5px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)'
+    };
+    return { c };
+  }
+}
+</script>
+</body>
+</html>

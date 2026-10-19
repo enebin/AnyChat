@@ -1,0 +1,36 @@
+{
+  "name": "anychat-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server that guides a coding agent through setting up AnyChat in an iOS app.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "anychat-mcp": "dist/src/index.js"
+  },
+  "files": [
+    "dist/src",
+    "catalog",
+    "demos"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && node dist/scripts/packDemos.js && node --test dist/test/*.test.js",
+    "prepack": "tsc && node dist/scripts/packDemos.js",
+    "catalog": "tsc && node dist/scripts/generateCatalog.js",
+    "catalog:check": "tsc && node dist/scripts/generateCatalog.js --check && node dist/scripts/buildExamples.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0",
+    "xcode": "^3.0.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@types/xcode": "^3.0.0",
+    "typescript": "^5.9.3"
+  }
+}

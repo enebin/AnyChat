@@ -1,0 +1,1867 @@
+{
+  "components": [
+    {
+      "name": "ChannelListView",
+      "declaration": "@MainActor struct ChannelListView",
+      "doc": "A list of the current user's channels.\n\nRegister a backend once near the root with `chatBackend(_:)`; the list loads from it. The\nhost app owns connecting that backend. Wrap the list in your own `NavigationStack`.\n\n```swift\nNavigationStack {\n    ChannelListView()\n        .onChannelSelected { channel in ... }\n}\n.chatBackend(backend)\n```\n\n- Since: 1.0.0",
+      "initializers": [
+        {
+          "kind": "init",
+          "name": "init(options:)",
+          "declaration": "@MainActor init(options: ChannelListOptions = ChannelListOptions())",
+          "doc": "Creates a channel list that loads from the backend registered with `chatBackend(_:)`.\n\n- Parameter options: Feature switches for the rows.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(repository:currentUserID:options:)",
+          "declaration": "@MainActor init(repository: any ChannelListRepository, currentUserID: String?, options: ChannelListOptions = ChannelListOptions())",
+          "doc": "Creates a channel list around a repository of your own, ignoring any registered backend.\n\nBackend adapters use this to offer screen-specific entry points, such as a custom query.\n\n- Since: 1.0.0"
+        }
+      ],
+      "slots": [
+        {
+          "kind": "method",
+          "name": "channelRow(_:)",
+          "declaration": "@MainActor func channelRow(@ViewBuilder _ content: @escaping (ChatChannel) -> some View) -> ChannelListView",
+          "doc": "Replaces an entire row. Swipe actions and pagination still work.\n\nThe whole rectangle the row occupies opens the channel, including its blank space,\nso the row does not need its own `contentShape`.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "channelListHeader(_:)",
+          "declaration": "@MainActor func channelListHeader(@ViewBuilder _ content: @escaping () -> some View) -> ChannelListView",
+          "doc": "Puts a view at the top of the list, above the first row, such as a strip of notes. It\nscrolls with the rows.\n\nThe view spans the list's width with no insets and no separators; draw a divider in it if\nyou want one. It is not a row: it does not open a channel and has no swipe actions. Buttons\ninside it take only their own taps, because the screen gives it the borderless button\nstyle; a style you set inside the view wins. Pagination is not affected.\n\nIt shows while the channels load, when there are none, and when loading failed, since its\ncontent is your own data. The loading indicator, the empty message, and the error with\nRetry stay centered over the list; if the header is tall enough to reach the middle of the\nlist, they draw over it. The closure runs again when you redraw the list with new data.\n\n```swift\nChannelListView()\n    .channelListHeader {\n        ScrollView(.horizontal, showsIndicators: false) {\n            HStack {\n                ForEach(notes) { note in NoteBubble(note) }\n            }\n            .padding(.horizontal, 16)\n        }\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "channelCoverImage(_:)",
+          "declaration": "@MainActor func channelCoverImage(@ViewBuilder _ content: @escaping (ChatChannel) -> some View) -> ChannelListView",
+          "doc": "Replaces the channel avatar.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "channelName(_:)",
+          "declaration": "@MainActor func channelName(@ViewBuilder _ content: @escaping (ChatChannel) -> some View) -> ChannelListView",
+          "doc": "Replaces the channel title.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "channelPreview(_:)",
+          "declaration": "@MainActor func channelPreview(@ViewBuilder _ content: @escaping (ChatChannel) -> some View) -> ChannelListView",
+          "doc": "Replaces the last message preview.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "channelUnreadCount(_:)",
+          "declaration": "@MainActor func channelUnreadCount(@ViewBuilder _ content: @escaping (ChatChannel) -> some View) -> ChannelListView",
+          "doc": "Replaces the unread count badge.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "createChannelButtonLabel(_:)",
+          "declaration": "@MainActor func createChannelButtonLabel(@ViewBuilder _ content: @escaping () -> some View) -> ChannelListView",
+          "doc": "Replaces the label of the navigation bar's create button.\n\n- Since: 1.0.0"
+        }
+      ],
+      "callbacks": [
+        {
+          "kind": "method",
+          "name": "onChannelSelected(_:)",
+          "declaration": "@MainActor func onChannelSelected(_ action: @escaping (ChatChannel) -> Void) -> ChannelListView",
+          "doc": "Called when a row is tapped. Use it to push your channel screen.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "onCreateChannelTapped(_:)",
+          "declaration": "@MainActor func onCreateChannelTapped(_ action: @escaping () -> Void) -> ChannelListView",
+          "doc": "Called when the navigation bar's create button is tapped.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "onLeaveChannel(_:)",
+          "declaration": "@MainActor func onLeaveChannel(_ action: @escaping (ChatChannel) -> Void) -> ChannelListView",
+          "doc": "Called after the current user successfully leaves a channel.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "onNotificationLevelChanged(_:)",
+          "declaration": "@MainActor func onNotificationLevelChanged(_ action: @escaping (ChatChannel) -> Void) -> ChannelListView",
+          "doc": "Called after the current user's notification level for a channel changes. The channel\ncarries the new level.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "onError(_:)",
+          "declaration": "@MainActor func onError(_ action: @escaping (any Error) -> Void) -> ChannelListView",
+          "doc": "Called when an action fails. Loading failures are shown in the list itself.\n\n- Since: 1.0.0"
+        }
+      ],
+      "settings": [
+        {
+          "kind": "method",
+          "name": "navigationTitleText(_:)",
+          "declaration": "@MainActor func navigationTitleText(_ title: String) -> ChannelListView",
+          "doc": "Sets the navigation title. Defaults to `\"Channels\"`.\n\n- Since: 1.0.0"
+        }
+      ],
+      "theme": {
+        "modifier": {
+          "kind": "method",
+          "name": "channelListTheme(_:)",
+          "declaration": "@MainActor func channelListTheme(_ theme: ChannelListTheme) -> some View",
+          "doc": "Applies a theme to the channel list in this part of the view tree.\n\n- Since: 1.0.0"
+        },
+        "type": {
+          "kind": "struct",
+          "name": "ChannelListTheme",
+          "declaration": "nonisolated struct ChannelListTheme",
+          "conformances": [
+            "Equatable",
+            "Sendable"
+          ],
+          "doc": "Colours and fonts for the channel list.\n\nApply one with `View.channelListTheme(_:)`. The default follows the system appearance.",
+          "members": [
+            {
+              "kind": "property",
+              "name": "background",
+              "declaration": "var background: Color"
+            },
+            {
+              "kind": "property",
+              "name": "titleText",
+              "declaration": "var titleText: Color"
+            },
+            {
+              "kind": "property",
+              "name": "memberCountText",
+              "declaration": "var memberCountText: Color"
+            },
+            {
+              "kind": "property",
+              "name": "lastUpdatedTimeText",
+              "declaration": "var lastUpdatedTimeText: Color"
+            },
+            {
+              "kind": "property",
+              "name": "chevronTint",
+              "declaration": "var chevronTint: Color",
+              "doc": "The chevron after the time.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "messageText",
+              "declaration": "var messageText: Color",
+              "doc": "Also tints the muted-channel bell."
+            },
+            {
+              "kind": "property",
+              "name": "broadcastMark",
+              "declaration": "var broadcastMark: Color"
+            },
+            {
+              "kind": "property",
+              "name": "frozenMark",
+              "declaration": "var frozenMark: Color"
+            },
+            {
+              "kind": "property",
+              "name": "unreadBadgeBackground",
+              "declaration": "var unreadBadgeBackground: Color"
+            },
+            {
+              "kind": "property",
+              "name": "unreadBadgeText",
+              "declaration": "var unreadBadgeText: Color"
+            },
+            {
+              "kind": "property",
+              "name": "unreadMentionText",
+              "declaration": "var unreadMentionText: Color"
+            },
+            {
+              "kind": "property",
+              "name": "receiptSent",
+              "declaration": "var receiptSent: Color"
+            },
+            {
+              "kind": "property",
+              "name": "receiptDelivered",
+              "declaration": "var receiptDelivered: Color"
+            },
+            {
+              "kind": "property",
+              "name": "receiptRead",
+              "declaration": "var receiptRead: Color"
+            },
+            {
+              "kind": "property",
+              "name": "separator",
+              "declaration": "var separator: Color"
+            },
+            {
+              "kind": "property",
+              "name": "coverPlaceholderBackground",
+              "declaration": "var coverPlaceholderBackground: Color"
+            },
+            {
+              "kind": "property",
+              "name": "coverPlaceholderTint",
+              "declaration": "var coverPlaceholderTint: Color"
+            },
+            {
+              "kind": "property",
+              "name": "broadcastCoverBackground",
+              "declaration": "var broadcastCoverBackground: Color"
+            },
+            {
+              "kind": "property",
+              "name": "broadcastCoverTint",
+              "declaration": "var broadcastCoverTint: Color"
+            },
+            {
+              "kind": "property",
+              "name": "leaveActionBackground",
+              "declaration": "var leaveActionBackground: Color"
+            },
+            {
+              "kind": "property",
+              "name": "notificationOnActionBackground",
+              "declaration": "var notificationOnActionBackground: Color"
+            },
+            {
+              "kind": "property",
+              "name": "notificationOffActionBackground",
+              "declaration": "var notificationOffActionBackground: Color",
+              "doc": "Kept dark on purpose: SwiftUI renders swipe action labels in white."
+            },
+            {
+              "kind": "property",
+              "name": "barButtonTint",
+              "declaration": "var barButtonTint: Color"
+            },
+            {
+              "kind": "property",
+              "name": "placeholderTint",
+              "declaration": "var placeholderTint: Color",
+              "doc": "Tints the glyph and the message of the empty and error states."
+            },
+            {
+              "kind": "property",
+              "name": "titleFont",
+              "declaration": "var titleFont: Font"
+            },
+            {
+              "kind": "property",
+              "name": "memberCountFont",
+              "declaration": "var memberCountFont: Font"
+            },
+            {
+              "kind": "property",
+              "name": "lastUpdatedTimeFont",
+              "declaration": "var lastUpdatedTimeFont: Font"
+            },
+            {
+              "kind": "property",
+              "name": "messageFont",
+              "declaration": "var messageFont: Font"
+            },
+            {
+              "kind": "property",
+              "name": "unreadBadgeFont",
+              "declaration": "var unreadBadgeFont: Font"
+            },
+            {
+              "kind": "property",
+              "name": "unreadMentionFont",
+              "declaration": "var unreadMentionFont: Font"
+            },
+            {
+              "kind": "init",
+              "name": "init(background:titleText:memberCountText:lastUpdatedTimeText:chevronTint:messageText:broadcastMark:frozenMark:unreadBadgeBackground:unreadBadgeText:unreadMentionText:receiptSent:receiptDelivered:receiptRead:separator:coverPlaceholderBackground:coverPlaceholderTint:broadcastCoverBackground:broadcastCoverTint:leaveActionBackground:notificationOnActionBackground:notificationOffActionBackground:barButtonTint:placeholderTint:titleFont:memberCountFont:lastUpdatedTimeFont:messageFont:unreadBadgeFont:unreadMentionFont:)",
+              "declaration": "init(background: Color? = nil, titleText: Color? = nil, memberCountText: Color? = nil, lastUpdatedTimeText: Color? = nil, chevronTint: Color? = nil, messageText: Color? = nil, broadcastMark: Color? = nil, frozenMark: Color? = nil, unreadBadgeBackground: Color? = nil, unreadBadgeText: Color? = nil, unreadMentionText: Color? = nil, receiptSent: Color? = nil, receiptDelivered: Color? = nil, receiptRead: Color? = nil, separator: Color? = nil, coverPlaceholderBackground: Color? = nil, coverPlaceholderTint: Color? = nil, broadcastCoverBackground: Color? = nil, broadcastCoverTint: Color? = nil, leaveActionBackground: Color? = nil, notificationOnActionBackground: Color? = nil, notificationOffActionBackground: Color? = nil, barButtonTint: Color? = nil, placeholderTint: Color? = nil, titleFont: Font? = nil, memberCountFont: Font? = nil, lastUpdatedTimeFont: Font? = nil, messageFont: Font? = nil, unreadBadgeFont: Font? = nil, unreadMentionFont: Font? = nil)",
+              "doc": "Creates a theme. Anything left `nil` falls back to the light-appearance default.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "type.property",
+              "name": "light",
+              "declaration": "static let light: ChannelListTheme",
+              "doc": "The light appearance.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "type.property",
+              "name": "dark",
+              "declaration": "static let dark: ChannelListTheme",
+              "doc": "The dark appearance.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "type.property",
+              "name": "adaptive",
+              "declaration": "static let adaptive: ChannelListTheme",
+              "doc": "Follows the system appearance. This is the default.\n\n- Since: 1.0.0"
+            }
+          ]
+        }
+      },
+      "options": {
+        "kind": "struct",
+        "name": "ChannelListOptions",
+        "declaration": "nonisolated struct ChannelListOptions",
+        "conformances": [
+          "Equatable",
+          "Sendable"
+        ],
+        "doc": "Feature switches for the channel list.\n\nEvery switch is off by default.",
+        "members": [
+          {
+            "kind": "property",
+            "name": "isTypingIndicatorEnabled",
+            "declaration": "var isTypingIndicatorEnabled: Bool",
+            "doc": "Shows \"… is typing…\" in place of the message preview while someone is typing.\n\n- Since: 1.0.0"
+          },
+          {
+            "kind": "property",
+            "name": "isMessageReceiptStatusEnabled",
+            "declaration": "var isMessageReceiptStatusEnabled: Bool",
+            "doc": "Shows the sent / delivered / read icon next to the timestamp for messages you sent.\n\n- Since: 1.0.0"
+          },
+          {
+            "kind": "property",
+            "name": "isMentionBadgeEnabled",
+            "declaration": "var isMentionBadgeEnabled: Bool",
+            "doc": "Shows an \"@\" mark on rows with unread mentions.\n\n- Since: 1.0.0"
+          },
+          {
+            "kind": "init",
+            "name": "init(isTypingIndicatorEnabled:isMessageReceiptStatusEnabled:isMentionBadgeEnabled:)",
+            "declaration": "init(isTypingIndicatorEnabled: Bool = false, isMessageReceiptStatusEnabled: Bool = false, isMentionBadgeEnabled: Bool = false)",
+            "doc": "Creates options.\n\n- Since: 1.0.0"
+          }
+        ]
+      },
+      "contextValues": [],
+      "domainTypes": [
+        "ChatAttachment",
+        "ChatChannel",
+        "ChatMessage",
+        "ChatSender"
+      ],
+      "backendBoundary": [
+        "ChannelListRepository"
+      ]
+    },
+    {
+      "name": "ChannelView",
+      "declaration": "@MainActor struct ChannelView",
+      "doc": "The messages of one channel, newest at the bottom.\n\nPush it from `ChannelListView.onChannelSelected` inside your own `NavigationStack`. It loads\nfrom the backend registered with `chatBackend(_:)`.\n\n```swift\nChannelListView()\n    .onChannelSelected { selected = $0 }\n    .navigationDestination(item: $selected) { ChannelView(channel: $0) }\n```\n\nThe composer sends text and attachments from the photo library and files. It offers the\ncamera only when your app's Info.plist describes camera use, and video capture only when it\nalso describes microphone use:\n\n```\nINFOPLIST_KEY_NSCameraUsageDescription: Take photos and videos to send in a channel.\nINFOPLIST_KEY_NSMicrophoneUsageDescription: Record sound with videos you send in a channel.\n```\n\n- Since: 1.0.0",
+      "initializers": [
+        {
+          "kind": "init",
+          "name": "init(channel:)",
+          "declaration": "@MainActor init(channel: ChatChannel)",
+          "doc": "Creates a channel screen that loads from the backend registered with `chatBackend(_:)`.\n\nThe header, the frozen banner, and whether the composer can send follow the latest `channel`\nyou pass with the same `id`. The screen does not observe the channel from the backend, so\npass a newer value to show a rename or a freeze. A different `id` starts a new screen.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(channel:repository:currentUserID:)",
+          "declaration": "@MainActor init(channel: ChatChannel, repository: any ChannelRepository, currentUserID: String?)",
+          "doc": "Creates a channel screen around a repository of your own, ignoring any registered backend.\n\nIt follows newer values of `channel` the same way as ``init(channel:)``.\n\n`currentUserID` decides which messages are drawn as the current user's. With `nil`, every\nsent message is drawn as someone else's, including one this device just sent: it is drawn\nas the current user's only while it is pending or failed.\n\n- Since: 1.0.0"
+        }
+      ],
+      "slots": [
+        {
+          "kind": "method",
+          "name": "channelHeader(_:)",
+          "declaration": "@MainActor func channelHeader(@ViewBuilder _ content: @escaping (ChatChannel) -> some View) -> ChannelView",
+          "doc": "Replaces the default centered header with a view at the leading edge of the navigation bar.\n\nThe view is shown at its ideal size, so the navigation bar does\nnot clip it and you do not need `.fixedSize()`. Long text is not truncated for you: give\nthe text an explicit width with `.frame(width:)` and a `lineLimit` to cap it. The bar does\nnot grow, so keep the view within its height; a picture, a name, and a one-line subtitle fit.\n\n```swift\nChannelView(channel: channel)\n    .channelHeader { channel in\n        VStack(alignment: .leading, spacing: 0) {\n            Text(channel.name ?? \"Chat\").font(.headline)\n            Text(\"Active now\").font(.caption).foregroundStyle(.secondary)\n        }\n    }\n```\n\nReturn no view to hide the header. The screen then adds no item at the leading edge, so a\n`toolbar` item of your own takes that spot. The default channel name below the bar stays\nhidden, as it does whenever this slot is set:\n\n```swift\nChannelView(channel: channel)\n    .channelHeader { _ in EmptyView() }\n    .toolbar {\n        ToolbarItem(placement: .topBarLeading) {\n            Button(\"Chats\", systemImage: \"line.3.horizontal\") { showsChats = true }\n        }\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "channelEmptyState(_:)",
+          "declaration": "@MainActor func channelEmptyState(@ViewBuilder _ content: @escaping (ComposerContext) -> some View) -> ChannelView",
+          "doc": "Replaces the \"No messages\" placeholder of a channel that has no messages yet.\n\nThe view fills the list's area between the header and the composer, centered, and moves up\nwith the composer when the keyboard opens. The composer stays usable below it. The view\ngoes away as soon as the channel has a message, including one the user just sent that is\nstill pending. Use a `Spacer` to place it at the top or the bottom of that area. A drag on\nthe view still dismisses the keyboard, and its buttons take their own taps.\n\n`composer` is the screen's `ComposerContext`, the same one the composer slots get. Its\n`send(text:)` sends through the screen like the composer does, for example a suggested\nprompt, and its `openPhotoLibrary()` and the other pickers open the composer's pickers.\nDisable your buttons while `composer.canSend` is `false`, such as while the messages load or\nin a channel that does not allow sending.\n\n```swift\nChannelView(channel: channel)\n    .channelEmptyState { composer in\n        VStack(spacing: 8) {\n            Spacer()\n            Text(\"No messages yet\").font(.headline)\n            Button(\"Say hi 👋\") { composer.send(text: \"Hi 👋\") }\n                .disabled(!composer.canSend)\n        }\n        .padding(.bottom, 16)\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageRow(_:)",
+          "declaration": "@MainActor func messageRow(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Replaces a whole message row, including the sender's name, picture and time. Date\nseparators and pagination still work.\n\nThe message signals still work around whatever the slot draws: a long press opens the\nmenu, which lifts the whole slot view, and tapping a failed message opens its dialog (by default Retry and Remove). Buttons\nand tap gestures inside the slot get the tap first, so a tap gesture that covers the whole\nslot hides that dialog; leave it off while `message.sendingStatus` is `.failed`. Declare\nmenu items with `messageContextMenu(_:)` rather than a `.contextMenu` inside the slot. Use\n`message.sendingStatus` to show the pending and failed states.\n\n`messageLongPressOverlay(above:below:)` lifts a new copy of the whole row, unscaled, in\nwhich view-local `@State` starts fresh. Keep state that must survive it in the message or\nyour own model.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageContent(_:)",
+          "declaration": "@MainActor func messageContent(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Replaces the bubble of a user's message, keeping the sender's name, picture, time and\nreceipt around it. System messages are not passed here.\n\nThe closure runs again whenever the message changes in place, such as streamed text.\n\nA long press on the slot's view still opens the message menu, which lifts that view alone.\nDeclare menu items with `messageContextMenu(_:)` rather than a `.contextMenu` inside the\nslot, which would compete with it.\n\n`messageLongPressOverlay(above:below:)` lifts a new copy of the slot's view, in which\nview-local `@State` starts fresh. Keep state that must survive it, such as an expanded\n\"Read more\", in the message or your own model.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageBubbleBackground(_:)",
+          "declaration": "@MainActor func messageBubbleBackground(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Replaces what is drawn behind a text bubble, such as a shape with a tail or a gradient fill,\nwhile the screen keeps drawing the text, attachments, time, and receipt.\n\nIt applies to the default text bubbles: a text message, the text below attachments, and\nthe placeholder for unsupported content. Media, file bubbles, system messages, and bubbles\ndrawn by `messageContent(_:)` or `messageRow(_:)` keep their own look. Use `context` to\nfollow the side and the position in a run, for example a tail only when\n`context.groupPosition` is `.single` or `.last`.\n\nThe view fills the bubble's frame and does not change its size. Nothing is reserved for a\ntail, so keep a tail within the spacing beside the bubble. The text still uses the theme's\n`incomingMessageText` and `outgoingMessageText`; set them for a fill they must stay readable on.\n\n```swift\nChannelView(channel: channel)\n    .messageBubbleBackground { _, context in\n        RoundedRectangle(cornerRadius: 20)\n            .fill(context.isMine ? AnyShapeStyle(.blue.gradient) : AnyShapeStyle(.quaternary))\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageReplyQuote(_:)",
+          "declaration": "@MainActor func messageReplyQuote(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Replaces the quote of the original above a reply's bubble.\n\nIt is called only for messages whose `replyTo` is set; read the original from\n`message.replyTo` and the reply's sender from `message.sender`. `context.isMine` describes\nthe reply, not the original: to say \"Mina replied to you\", capture the current user's id\nfrom the code that builds the screen and compare it with `message.replyTo?.sender?.id`.\nThe default draws a \"replied to\" line in the sender name's style and an\noutlined copy of the original's text, or its first picture, with \"Original message\nunavailable\" when `replyTo.isUnavailable` is `true`. Return nothing to hide the quote and\nits spacing.\n\nThe view sits in the bubble column, above the bubble and below the sender's name, aligned to\nthe sender's side. The default's `ChannelTheme.replyQuoteText`, `replyQuoteBorder`, and\n`replyQuoteFont` are not applied; read `channelTheme` from the environment to use them. It\napplies around the default\nbubble and around `messageContent(_:)`, but not around `messageRow(_:)`, which draws its own\nquote. Quotes are drawn whatever `ChatChannel.canReply` says. The message menu lifts the\nbubble alone, so a long press on the quote opens nothing; tapping it does nothing unless the\nview holds a `Button`.\n\n```swift\nChannelView(channel: channel)\n    .messageReplyQuote { message, _ in\n        if let original = message.replyTo, !original.isUnavailable {\n            Label(original.sender?.name ?? \"Message\", systemImage: \"arrowshape.turn.up.left\")\n                .font(.caption)\n        }\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageAccessory(_:)",
+          "declaration": "@MainActor func messageAccessory(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Adds a view below a user message's bubble, such as reaction badges, without replacing the\nbubble or the row. System messages are not passed here.\n\nThe view sits 4pt below the bubble, or below its receipt or sending status when present,\naligned to the sender's side. Custom pictures and times stay beside the bubble. Return\nnothing to add nothing, for example when the message has no reactions. Read app state\nfrom `message.attributes`; the closure runs again whenever\nthe message changes in place. It is called for pending and failed messages too, so check\n`message.sendingStatus` to show something only once a message is sent.\n\nIt applies around the default bubble and around `messageContent(_:)`, but not around\n`messageRow(_:)`, which draws the whole row and its own accessory. The message menu lifts\nthe bubble alone, so a long press on this view opens nothing; buttons inside it get their\ntaps first.\nTo overlap the bubble's bottom edge, use negative top padding that also accounts for\nany receipt or sending status above the accessory.\n\n```swift\nChannelView(channel: channel)\n    .messageAccessory { message, context in\n        if let reactions = message.attributes[Reactions.self] {\n            ReactionBadges(reactions)\n        }\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageAvatar(_:)",
+          "declaration": "@MainActor func messageAvatar(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Adds a sender picture beside other people's messages, keeping the rest of the row,\nfor example to draw initials.\n\nThe default layout has no pictures beside bubbles. The closure is called for every incoming\nrow. Its view shows on the last row of a run and keeps its size on the rows above it, so the\nbubbles line up. Return a view of the same size for every message, including when\n`message.sender` is `nil`. The view sets its own size. It sits\n12pt from the bubble, aligned to the bubble's bottom.\n\nReturn nothing to remove the picture and its spacing, so the bubbles start at the leading\nmargin, for example in a one-to-one channel. Do this for every message of the screen;\nreturning nothing for some messages only misaligns those rows.\n\nIt applies around the default bubble and around `messageContent(_:)`, but not around\n`messageRow(_:)` or system messages. The theme's avatar placeholder colors are not applied;\nread `channelTheme` from the environment to use them. The view is built on the hidden rows\ntoo, so a picture loaded from a URL is requested for them as well.\n\n```swift\nChannelView(channel: channel)\n    .messageAvatar { message, _ in\n        Text(message.sender?.name?.prefix(1) ?? \"?\")\n            .frame(width: 32, height: 32)\n            .background(.gray.opacity(0.2), in: .circle)\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageSenderName(_:)",
+          "declaration": "@MainActor func messageSenderName(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Replaces the sender's name above other people's messages, keeping the rest of the row.\n\nThe closure is called where the default name goes: the first row of a run of one person's\nmessages. It is called when `message.sender` or its name is `nil` too, so decide what to\nshow then. The view sits above the bubble with the default name's leading inset. The theme's\n`senderNameFont` and `senderNameText` are not applied; read `channelTheme` from the\nenvironment to use them.\n\nReturn nothing to hide the name and its spacing, for example in a one-to-one channel where\nthe name adds nothing. Capture the channel from the code that builds the screen to decide.\n\nIt applies around the default bubble and around `messageContent(_:)`, but not around\n`messageRow(_:)` or system messages. Your own messages never show a name.\n\n```swift\nChannelView(channel: channel)\n    .messageSenderName { message, _ in\n        if channel.memberCount != 2, let name = message.sender?.name {\n            Text(name).font(.caption).foregroundStyle(.secondary)\n        }\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageTime(_:)",
+          "declaration": "@MainActor func messageTime(@ViewBuilder _ content: @escaping (ChatMessage, MessageRowContext) -> some View) -> ChannelView",
+          "doc": "Adds a custom time beside a message bubble, keeping the rest of the row.\n\nThe default layout omits per-message times. The closure is called on the last message of a run, once it is\nsent, on both sides. Pending and failed messages show their sending status there instead,\nso the closure is not called for them. The view sits beside the bubble, aligned to its\nbottom. Receipts remain beneath your own bubbles. The theme's `timeFont`\nand `timeText` are not applied; read `channelTheme` from the environment to use them.\n\nFormat `message.createdAt` yourself. A locale-aware style such as\n`.dateTime.hour().minute()` reads \"3:05 PM\" or \"15:05\" depending on the locale.\n\nReturn nothing to hide the time and its spacing.\n\nIt applies around the default bubble and around `messageContent(_:)`, but not around\n`messageRow(_:)` or system messages. Date separators do not change; see\n`messageDateSeparator(_:)`.\n\n```swift\nChannelView(channel: channel)\n    .messageTime { message, _ in\n        Text(message.createdAt, format: .dateTime.hour().minute())\n            .font(.caption2)\n            .foregroundStyle(.secondary)\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageDateSeparator(_:)",
+          "declaration": "@MainActor func messageDateSeparator(@ViewBuilder _ content: @escaping (MessageDateSeparatorContext) -> some View) -> ChannelView",
+          "doc": "Replaces the date separator above the first message of each day, or hides it.\n\nThe context carries the date of the day's first message and the default separator's\ntexts, `day` (\"Today\", \"Yesterday\", \"Wed, Nov 15\") and `time` (\"10:13 PM\"), so you can\nrestyle them without formatting the date again. Format `context.date` yourself for other\nwording or another locale. The view is centered in the row. The theme's\n`dateSeparatorFont`, `dateSeparatorText`, and `dateSeparatorBackground` are not applied;\nread `channelTheme` from the environment to use them.\n\nReturn nothing to hide the separator and its spacing. Which messages start a day does not\nchange, and the separator stays above `messageRow(_:)` too.\n\n```swift\nChannelView(channel: channel)\n    .messageDateSeparator { context in\n        Text(context.day.uppercased())\n            .font(.caption2.weight(.semibold))\n            .foregroundStyle(.secondary)\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerLeadingItems(_:)",
+          "declaration": "@MainActor func composerLeadingItems(@ViewBuilder _ content: @escaping (ComposerContext) -> some View) -> ChannelView",
+          "doc": "Puts your own views before the composer's text field, such as a camera shortcut, in place\nof the attachment (+) button.\n\nPut `context.defaultItems` in to keep the + button; leave it out to remove it, for example\nwhen your backend does not take attachments. Open the pickers with the `context` actions,\nso picked items are sent like the + button's. The items are disabled while\n`context.canSend` is `false`, so you do not need to check it. They keep the composer's\nspacing and stay aligned with the field's last line as it grows, and they receive the\nscreen's environment.\n\n```swift\nChannelView(channel: channel)\n    .composerLeadingItems { context in\n        if context.canOpenCamera {\n            Button { context.openCamera() } label: { Image(systemName: \"camera\") }\n                .accessibilityLabel(\"Camera\")\n        }\n        context.defaultItems\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerTrailingItems(_:)",
+          "declaration": "@MainActor func composerTrailingItems(@ViewBuilder _ content: @escaping (ComposerContext) -> some View) -> ChannelView",
+          "doc": "Puts your own views after the composer's text field, inside its background, such as a voice button.\n\nThey show while the field is empty; the send button takes their place while there is text\nto send, and the stop button while `composerStopButton(isResponding:action:)` reports a response. There\nis no default item on this side, so `context.defaultItems` is empty. The\nitems are disabled while `context.canSend` is `false`, keep the composer's spacing, and\nreceive the screen's environment.\n\n```swift\nChannelView(channel: channel)\n    .composerTrailingItems { context in\n        Button { context.openPhotoLibrary() } label: { Image(systemName: \"photo\") }\n            .accessibilityLabel(\"Photo library\")\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerSendButtonLabel(_:)",
+          "declaration": "@MainActor func composerSendButtonLabel(@ViewBuilder _ content: @escaping () -> some View) -> ChannelView",
+          "doc": "Replaces what the composer's send button shows, such as the text \"Send\" in place of the\narrow icon. The screen keeps the button, so tapping it sends the draft as before.\n\nThe label shows where the send button does: while there is text to send, in place of the\ntrailing items, inside the field's background in both layouts. It sits in a frame\nof at least 32 × 32pt, centred, the arrow's size, so text lines up with the other buttons\nand stays as easy to tap. The label receives the screen's environment and colours itself:\nread `ChannelTheme.composerButtonTint` from `@Environment(\\.channelTheme)` to match the\nother buttons. VoiceOver reads the label as drawn, so give an icon-only label its own\n`.accessibilityLabel`. It has no effect alongside `composer(_:)`.\n\n```swift\nChannelView(channel: channel)\n    .composerSendButtonLabel { SendLabel() }\n\nstruct SendLabel: View {\n    @Environment(\\.channelTheme) private var theme\n\n    var body: some View {\n        Text(\"Send\")\n            .font(.body.weight(.semibold))\n            .foregroundStyle(theme.composerButtonTint)\n    }\n}\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composer(_:)",
+          "declaration": "@MainActor func composer(@ViewBuilder _ content: @escaping (ComposerContext) -> some View) -> ChannelView",
+          "doc": "Replaces the whole composer with your own view, such as an AI agent's composer with a stop\nbutton.\n\nYour view owns the draft and every control, so `composerPlaceholder(_:)`,\n`composerLeadingItems(_:)`, `composerTrailingItems(_:)`, `composerItemsInsideField()`, and\n`composerSendButtonLabel(_:)` have no effect alongside it, and\n`context.defaultItems` is empty. Send with `context.send(text:)` and clear your draft only\nwhile `context.canSend` is `true`, since the call does nothing otherwise. Open the pickers\nwith the `context` actions. The screen does not disable your view: read `context.canSend`\nto disable what should wait, and `context.isUnavailable` to explain why. To stop a streamed\nanswer, set `composerStopButton(isResponding:action:)` and draw your stop button from\n`context.isResponding` and `context.stop()`; it keeps working because the screen leaves your\nview enabled.\n\nThe screen still places your view above the keyboard, so it follows the keyboard as the\nuser drags the list to dismiss it. It paints `ChannelTheme.composerBackground`, or your\n`composerBackground(_:)` view, behind your view down to the screen's bottom edge, keeps the\nmessages above it, shows the frozen banner, and scrolls to the newest message after a send.\nIt also shows the reply bar above your view while the user answers a message; hide it with\n`composerReplyBar(_:)` if your view draws its own from `context.replyingTo`. Your view\nreceives the screen's environment.\n\n```swift\nChannelView(channel: channel)\n    .composer { context in\n        AgentComposer(context: context)\n    }\n\nstruct AgentComposer: View {\n    let context: ComposerContext\n    @State private var draft = \"\"\n\n    var body: some View {\n        HStack {\n            TextField(\"Ask anything\", text: $draft)\n                .disabled(!context.canSend)\n            Button(\"Send\") {\n                guard context.canSend else { return }\n                context.send(text: draft)\n                draft = \"\"\n            }\n            .disabled(!context.canSend)\n        }\n        .padding()\n    }\n}\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerReplyBar(_:)",
+          "declaration": "@MainActor func composerReplyBar(@ViewBuilder _ content: @escaping (ChatMessage, ComposerContext) -> some View) -> ChannelView",
+          "doc": "Replaces the bar above the composer that shows which message the user is answering.\n\nIt is called while a reply is being written, which needs `ChatChannel.canReply` to be\n`true`, with the message being answered and the composer's context; `context.cancelReply()` closes the bar and keeps the draft. The default\nshows \"Replying to\" and the sender's name, a one-line preview of the message, and a close\nbutton. Return nothing to hide it, for example when your `composer(_:)` view draws its own\nfrom `context.replyingTo`. The bar sits directly above the composer, moves with the\nkeyboard, and the messages stay above it. Your view receives the screen's environment;\nread `channelTheme` from it to match the default.\n\n```swift\nChannelView(channel: channel)\n    .composerReplyBar { message, context in\n        HStack {\n            Text(\"Answering \\(message.sender?.name ?? \"message\")\")\n            Spacer()\n            Button(\"Cancel\") { context.cancelReply() }\n        }\n        .padding(.horizontal)\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerBackground(_:)",
+          "declaration": "@MainActor func composerBackground(@ViewBuilder _ content: @escaping () -> some View) -> ChannelView",
+          "doc": "Draws your own view behind the composer in place of the `ChannelTheme.composerBackground`\ncolor, such as a gradient that fades the messages out under a floating composer.\n\nThe view is laid out from the composer's top edge down to the bottom edge of the screen,\nand sits behind the composer and the reply bar. The area also spans the home indicator, or\nthe space behind the keyboard while it is up, so its height changes with the keyboard and\na gradient's proportional stops move with it. Messages scroll behind it, so fade them out\nwith a gradient of fixed height at the top over a solid fill, and give your composer some\ntop padding for the fade to show in. Your view's buttons do not receive taps. It works with\nthe default composer and with `composer(_:)` alike, and receives the screen's environment.\n\n```swift\nChannelView(channel: channel)\n    .composerBackground {\n        VStack(spacing: 0) {\n            LinearGradient(colors: [.white.opacity(0), .white], startPoint: .top, endPoint: .bottom)\n                .frame(height: 32)\n            Rectangle().fill(.white)\n        }\n    }\n```\n\nWithout this modifier the screen paints `ChannelTheme.composerBackground` over the same area.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "jumpToLatestButton(_:)",
+          "declaration": "@MainActor func jumpToLatestButton(@ViewBuilder _ content: @escaping (_ jump: @escaping () -> Void) -> some View) -> ChannelView",
+          "doc": "Replaces the round button that returns to the newest message while the user has scrolled up.\n\nBy default, a 44pt glass button with a down arrow floats above the composer whenever the\nnewest message is more than 100 points below the visible part of the list, including\nafter new messages arrive while the user reads older ones. Tapping it scrolls to the newest\nmessage, and the list follows new messages again. VoiceOver reads it as \"Jump to latest\".\n\nThe closure receives `jump`, the action that scrolls to the newest message. Call it from\nyour button. The screen still decides when the view shows, fades and scales it in and out,\nand places it centered just above the composer and the reply bar, moving with the\nkeyboard. Return no view to hide the button. Your view receives the screen's environment;\nread `channelTheme` from it to match the default, and label an icon-only button for\nVoiceOver yourself.\n\n```swift\nChannelView(channel: channel)\n    .jumpToLatestButton { jump in\n        Button(action: jump) {\n            Label(\"Latest\", systemImage: \"arrow.down\")\n                .padding(.horizontal, 14)\n                .padding(.vertical, 8)\n                .background(.thinMaterial, in: Capsule())\n        }\n        .buttonStyle(.plain)\n    }\n\n// Or hide it:\nChannelView(channel: channel)\n    .jumpToLatestButton { _ in EmptyView() }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageContextMenu(_:)",
+          "declaration": "@MainActor func messageContextMenu(@ViewBuilder _ content: @escaping (ChatMessage, MessageActionContext) -> some View) -> ChannelView",
+          "doc": "Sets the menu a user message shows when long-pressed.\n\nA long press on the bubble opens it, and the menu lifts the bubble alone. A row drawn by\n`messageRow(_:)` is lifted whole, because the screen does not know where its bubble is.\n\nReturn plain `Button`s with text labels, as in `.contextMenu`. Put `context.defaultItems`\nin to keep the screen's own buttons, fitted to the message: Retry (while the user can send)\nand Remove for a failed message; for any other message, Reply (while `context.canReply`)\nand Copy (when it has text). Leave it out to decide every button yourself. Returning no buttons shows no menu. System messages are not\npassed here.\n\n```swift\nChannelView(channel: channel)\n    .messageContextMenu { message, context in\n        context.defaultItems\n        Button(\"Report\") { report(message) }\n    }\n```\n\nWithout this modifier the menu holds only the default buttons. It does not change what\ntapping a failed message shows; that is `failedMessageActions(_:)`.\n\n`messageLongPressOverlay(above:below:)` replaces this menu: while it is set, a long press\nshows the overlay and this modifier has no effect, whatever their order.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageLongPressOverlay(above:below:)",
+          "declaration": "@MainActor func messageLongPressOverlay(@ViewBuilder above: @escaping (ChatMessage, MessageOverlayContext) -> some View, @ViewBuilder below: @escaping (ChatMessage, MessageOverlayContext) -> some View) -> ChannelView",
+          "doc": "Shows your own views above and below a long-pressed message in place of the system menu;\nyour buttons must call `context.dismiss()` when they finish, because the overlay stays\nopen until something closes it.\n\nA long press on a user message's bubble lifts it, dims the messages and the composer, and\nplaces the `above:` view above the bubble and the `below:` view below it, both on the\nsender's side. The screen draws a card around the `below:` view and gives its buttons the\ncard's row style, so `context.defaultItems` (Retry and Remove for a failed message; Reply\nand Copy otherwise) and your own `Button`s look the same; a button with its own\n`.buttonStyle` keeps it. The `above:` view is placed as it is, such as a bar of reactions.\nThe default items close the overlay after acting; tapping the dimmed area closes it too.\n\nBoth closures are always written; return nothing from one to leave its side empty. When\nboth return nothing for a message, a long press on it does nothing. The navigation bar\nstays undimmed, and the keyboard stays up. System messages are not passed here.\n\nThe lifted bubble is drawn again from the same message: the default bubble, the\n`messageContent(_:)` slot's view, or the whole `messageRow(_:)` slot's row. A slot's\nview-local `@State` starts fresh in that copy.\n\nReactions stay with your backend: picking one calls your code, and\n`messageAccessory(_:)` draws them below the bubble. A pending or failed message is not on\nthe backend yet, so check `message.sendingStatus` before offering actions that need it.\n\n```swift\nChannelView(channel: channel)\n    .messageLongPressOverlay { message, context in\n        if message.sendingStatus == nil {\n            EmojiBar { emoji in\n                react(to: message, with: emoji)\n                context.dismiss()\n            }\n        }\n    } below: { message, context in\n        context.defaultItems\n        Button(\"Report\") {\n            report(message)\n            context.dismiss()\n        }\n    }\n```\n\nWhile this is set, `messageContextMenu(_:)` has no effect. It does not change what\ntapping a failed message shows; that is `failedMessageActions(_:)`.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "failedMessageActions(_:)",
+          "declaration": "@MainActor func failedMessageActions(@ViewBuilder _ content: @escaping (ChatMessage, MessageActionContext) -> some View) -> ChannelView",
+          "doc": "Sets the confirmation dialog a message shows when tapped after it failed to send.\n\nReturn plain `Button`s with text labels; the dialog shows only their titles and roles, adds\nCancel, and a button with an icon appears there as two accessibility elements.\n`context.defaultItems` holds Retry (while the user can send) and Remove. Leave out\n`context.resend()` and `context.remove()` here and in `messageContextMenu(_:)` and the\nuser has no way to recover the message. Returning no buttons makes the tap do nothing.\n\n```swift\nChannelView(channel: channel)\n    .failedMessageActions { message, context in\n        context.defaultItems\n        Button(\"Edit and Resend\") { edit(message) }\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageRow(_:_:)",
+          "declaration": "@MainActor func messageRow<Value>(_ type: Value.Type, @ViewBuilder _ content: @escaping (Value, ChatMessage, MessageRowContext) -> some View) -> ChannelView where Value : Hashable, Value : Sendable",
+          "doc": "Replaces the whole row of messages carrying the given custom value type.\n\nOther types use their own renderer, the untyped row slot, or the default row. The last\nregistration for this type wins. Date separators and pagination remain outside the slot.\n\nThe message signals still work around whatever the slot draws: a long press opens the\nmenu, which lifts the whole slot view, and tapping a failed message opens its dialog (by default Retry and Remove). Buttons\nand tap gestures inside the slot get the tap first, so a tap gesture that covers the whole\nslot hides that dialog; leave it off while `message.sendingStatus` is `.failed`. Declare\nmenu items with `messageContextMenu(_:)` rather than a `.contextMenu` inside the slot. Use\n`message.sendingStatus` to show the pending and failed states.\n\n`messageLongPressOverlay(above:below:)` lifts a new copy of the whole row, unscaled, in\nwhich view-local `@State` starts fresh. Keep state that must survive it in the message or\nyour own model.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageContent(_:_:)",
+          "declaration": "@MainActor func messageContent<Value>(_ type: Value.Type, @ViewBuilder _ content: @escaping (Value, ChatMessage, MessageRowContext) -> some View) -> ChannelView where Value : Hashable, Value : Sendable",
+          "doc": "Replaces the bubble content of messages carrying the given custom value type.\n\nKeeps the default sender, time, and receipt layout. Other types use their own renderer,\nthe untyped content slot, or the default content. The last registration for this type wins.\nSystem messages use the whole-row slot instead.\n\nA long press on the slot's view still opens the message menu, which lifts that view alone.\nDeclare menu items with `messageContextMenu(_:)` rather than a `.contextMenu` inside the\nslot, which would compete with it.\n\n`messageLongPressOverlay(above:below:)` lifts a new copy of the slot's view, in which\nview-local `@State` starts fresh. Keep state that must survive it in the message or your\nown model.\n\n- Since: 1.0.0"
+        }
+      ],
+      "callbacks": [
+        {
+          "kind": "method",
+          "name": "onAttachmentSelected(_:)",
+          "declaration": "@MainActor func onAttachmentSelected(_ action: @escaping (ChatAttachment, ChatMessage) -> Void) -> ChannelView",
+          "doc": "Called when a default image, video, or file attachment is tapped, with the message that\ncarries it.\n\nThe screen does not open, download, or preview attachments itself. Without this callback,\nattachments are not buttons. It is not called for a message that is still sending or failed:\nits file is not on the backend yet, and tapping a failed message opens its dialog.\nCustom message slots handle their own taps.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "onMessageDoubleTapped(_:)",
+          "declaration": "@MainActor func onMessageDoubleTapped(_ action: @escaping (ChatMessage, MessageActionContext) -> Void) -> ChannelView",
+          "doc": "Called when a message is double-tapped, with that message and a `MessageActionContext`,\nfor example to send a reaction through your own backend.\n\nIt shows nothing itself; act in the closure. It is called whatever the message's\n`sendingStatus`; a pending or failed message is not on the backend yet, so check it before\nacting there. Double taps are recognized only while this is set, because recognizing them\nmakes a single tap on a failed message wait briefly. Buttons inside the row, such as default\nattachments and a slot's own controls, take their taps first. System messages are not\npassed here.\n\n```swift\nChannelView(channel: channel)\n    .onMessageDoubleTapped { message, context in\n        guard message.sendingStatus == nil else { return }\n        react(to: message)\n    }\n```\n\n- Since: 1.0.0"
+        }
+      ],
+      "settings": [
+        {
+          "kind": "method",
+          "name": "messageBubbleLayout(insets:maxWidth:)",
+          "declaration": "@MainActor func messageBubbleLayout(insets: EdgeInsets? = nil, maxWidth: CGFloat? = nil) -> ChannelView",
+          "doc": "Changes the space between a text bubble's edge and its text, and how wide the bubble can\ngrow, while the screen keeps drawing the bubble.\n\nIt applies to the same bubbles as `messageBubbleBackground(_:)`: a text message, the text\nbelow attachments, and the placeholder for unsupported content. Media, file bubbles, reply\nquotes, system messages, and bubbles drawn by `messageContent(_:)` or `messageRow(_:)` keep\ntheir own size.\n\nPass only what you want to change; `nil` keeps the default or the value from an earlier\ncall. The defaults are 9pt above and below the text, 14pt beside it, and a maximum width of\n240pt. `maxWidth` is the whole bubble's width, insets included. A one-line bubble is at\nleast 22pt plus the top and bottom insets tall. The default fill draws its tail below the\nbottom inset, on the last bubble of a run; a `messageBubbleBackground(_:)` view fills the\ninsets exactly, so give it insets that clear its corner radius.\n\n```swift\nChannelView(channel: channel)\n    .messageBubbleLayout(insets: EdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16))\n    .messageBubbleBackground { _, _ in\n        RoundedRectangle(cornerRadius: 22, style: .continuous).fill(.gray.opacity(0.15))\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerPlaceholder(_:)",
+          "declaration": "@MainActor func composerPlaceholder(_ text: String) -> ChannelView",
+          "doc": "Sets the composer's placeholder, shown in the empty text field in place of \"Enter message\".\n\nPass text you have already localized. It shows while the user can send and while the\nmessages load. In a channel that does not allow sending, the field shows \"Chat is\nunavailable in this channel\" instead, which explains why it is disabled.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerItemsInsideField()",
+          "declaration": "@MainActor func composerItemsInsideField() -> ChannelView",
+          "doc": "Moves the composer's leading items into the text field's background, so the controls and\nthe field read as one capsule, such as a camera button at the front of the field.\n\nThe default layout keeps the leading items or attachment (+) button outside the field;\ntrailing items and the send button are already inside. This modifier also brings the\nleading controls inside and gives every item a common minimum frame. Each item\nsits in a frame of at least 32 × 32pt, centred, so a plain SF Symbol button lines up with\nthe + and send buttons. The capsule keeps `ChannelTheme.composerFieldBackground` and grows\nwith the field's lines, with the items on the last line. A side whose items draw nothing,\nsuch as a camera button on a device without a camera, keeps the field's padding. It has no\neffect alongside `composer(_:)`.\n\n```swift\nChannelView(channel: channel)\n    .composerItemsInsideField()\n    .composerLeadingItems { context in\n        if context.canOpenCamera {\n            Button { context.openCamera() } label: { Image(systemName: \"camera.fill\") }\n                .accessibilityLabel(\"Camera\")\n        }\n    }\n    .composerTrailingItems { context in\n        Button { context.openPhotoLibrary() } label: { Image(systemName: \"photo\") }\n            .accessibilityLabel(\"Photo library\")\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "composerStopButton(isResponding:action:)",
+          "declaration": "@MainActor func composerStopButton(isResponding: Bool, action: @escaping () -> Void) -> ChannelView",
+          "doc": "Turns the composer's send button into a stop button while `isResponding` is `true`, such as\nwhile an assistant's answer streams in. Tapping it calls `action`.\n\nPass the current value from your own state on every update; the screen does not detect or\nstore whether a response is in progress. While it is `true`, the stop button sits where the\nsend button does, in place of the trailing items, whether or not there is a draft. It\nworks even while `context.canSend` is `false`. The field stays editable and keeps its\ndraft, so the user can write the next message; the return key adds a new line as before,\nand send comes back with the draft once `isResponding` is `false`. `composerSendButtonLabel(_:)`\ndoes not change the stop button. VoiceOver reads it as \"Stop\".\n\n`ComposerContext.isResponding` and `ComposerContext.stop()` carry the same state and\naction. Composer items are replaced by the stop button while it shows, so for a stop button\nthat looks different, draw the composer with `composer(_:)`, which has no default stop\nbutton, from those two.\n\n```swift\nChannelView(channel: channel)\n    .composerStopButton(isResponding: assistant.isAnswering(channelID: channel.id)) {\n        assistant.stopAnswering(channelID: channel.id)\n    }\n```\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "method",
+          "name": "messageScrollBehavior(_:)",
+          "declaration": "@MainActor func messageScrollBehavior(_ behavior: MessageScrollBehavior) -> ChannelView",
+          "doc": "Chooses how the message list moves when the user sends a message.\n\nBy default (`.followsLatest`) the list scrolls to the newest message and follows the reply\nas it grows, as in a messenger. With `.questionToTop` the sent message moves to the top of\nthe list instead, 16 points below the header, and the reply fills the space below it, as in\nan AI chat. The list adds blank space below the messages so the sent message can reach the\ntop even when the channel is short; the space shrinks as the reply grows and is gone once\nthe reply reaches the bottom of the screen. From then on the list stays where it is while\nthe reply keeps growing, and the jump-to-latest button shows once the reply's end is out of\nview. Scrolling, the keyboard, and older pages keep the sent message where it is.\n\n```swift\nChannelView(channel: channel)\n    .messageScrollBehavior(.questionToTop)\n```\n\nThe move applies to messages sent from the composer, including `ComposerContext.send(text:)`\nfrom your own views. Your backend must put a sent message in the next snapshot as pending,\nas the adapter rules already require; the list moves the first new pending message of the\ncurrent user's that arrives after the send.\n\n- Since: 1.0.0"
+        }
+      ],
+      "theme": {
+        "modifier": {
+          "kind": "method",
+          "name": "channelTheme(_:)",
+          "declaration": "@MainActor func channelTheme(_ theme: ChannelTheme) -> some View",
+          "doc": "Applies a theme to the channel screen in this part of the view tree.\n\n- Since: 1.0.0"
+        },
+        "type": {
+          "kind": "struct",
+          "name": "ChannelTheme",
+          "declaration": "nonisolated struct ChannelTheme",
+          "conformances": [
+            "Equatable",
+            "Sendable"
+          ],
+          "doc": "Colours and fonts for the channel screen.\n\nApply one with `View.channelTheme(_:)`. The default follows the system appearance.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "property",
+              "name": "background",
+              "declaration": "var background: Color",
+              "doc": "The screen background behind the messages. It also tints the glass of the long-press\noverlay's card.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "headerTitleText",
+              "declaration": "var headerTitleText: Color",
+              "doc": "The channel name in the navigation bar.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "incomingBubbleBackground",
+              "declaration": "var incomingBubbleBackground: Color",
+              "doc": "The bubble behind messages from other people.\n\nAlso the frame around a grid of images on either side, and the area behind an image or\nvideo thumbnail that has not loaded.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "outgoingBubbleBackground",
+              "declaration": "var outgoingBubbleBackground: Color",
+              "doc": "The bubble behind the current user's messages.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "incomingMessageText",
+              "declaration": "var incomingMessageText: Color",
+              "doc": "Text inside other people's bubbles.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "outgoingMessageText",
+              "declaration": "var outgoingMessageText: Color",
+              "doc": "Text inside the current user's bubbles.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "senderNameText",
+              "declaration": "var senderNameText: Color",
+              "doc": "The sender's name above the first bubble of a run.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "replyQuoteText",
+              "declaration": "var replyQuoteText: Color",
+              "doc": "The quoted original above a reply's bubble. Its \"replied to\" line, and the text shown when\nthe original is unavailable, use `senderNameText`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "replyQuoteBorder",
+              "declaration": "var replyQuoteBorder: Color",
+              "doc": "The outline of the quoted original above a reply's bubble.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "timeText",
+              "declaration": "var timeText: Color",
+              "doc": "The time beside the last bubble of a run.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "systemMessageText",
+              "declaration": "var systemMessageText: Color",
+              "doc": "Centered lines the backend writes, such as \"Alice joined\".\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "dateSeparatorBackground",
+              "declaration": "var dateSeparatorBackground: Color",
+              "doc": "The pill behind the day and time above each day's first message. Clear by default.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "dateSeparatorText",
+              "declaration": "var dateSeparatorText: Color",
+              "doc": "The day and time above each day's first message.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "receiptSent",
+              "declaration": "var receiptSent: Color",
+              "doc": "The single check on a sent message.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "receiptDelivered",
+              "declaration": "var receiptDelivered: Color",
+              "doc": "The double check on a delivered message.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "receiptRead",
+              "declaration": "var receiptRead: Color",
+              "doc": "The double check on a read message.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "avatarPlaceholderBackground",
+              "declaration": "var avatarPlaceholderBackground: Color",
+              "doc": "Behind a person or channel picture that has not loaded or does not exist.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "avatarPlaceholderTint",
+              "declaration": "var avatarPlaceholderTint: Color",
+              "doc": "The glyph inside that placeholder.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "broadcastCoverBackground",
+              "declaration": "var broadcastCoverBackground: Color",
+              "doc": "Behind the glyph of a broadcast channel's picture in the header.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "broadcastCoverTint",
+              "declaration": "var broadcastCoverTint: Color",
+              "doc": "The glyph of a broadcast channel's picture in the header.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "accent",
+              "declaration": "var accent: Color",
+              "doc": "The retry button and the loading spinners.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "placeholderTint",
+              "declaration": "var placeholderTint: Color",
+              "doc": "The glyph and the message of the empty and error states.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "fileIconBackground",
+              "declaration": "var fileIconBackground: Color",
+              "doc": "The tile behind a file attachment's icon.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "fileIconTint",
+              "declaration": "var fileIconTint: Color",
+              "doc": "A file attachment's icon.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "mediaPlaceholderTint",
+              "declaration": "var mediaPlaceholderTint: Color",
+              "doc": "The photo icon shown while an image or video thumbnail loads or after it fails.\n\nThe area behind it uses `incomingBubbleBackground`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "mediaBadgeBackground",
+              "declaration": "var mediaBadgeBackground: Color",
+              "doc": "The circle behind the GIF and play badges on thumbnails.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "mediaBadgeTint",
+              "declaration": "var mediaBadgeTint: Color",
+              "doc": "The GIF and play glyphs on thumbnails.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerBackground",
+              "declaration": "var composerBackground: Color",
+              "doc": "The bar behind the message composer, down to the bottom of the screen.\n`ChannelView.composerBackground(_:)` replaces it with a view of your own, such as a gradient.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerFieldBackground",
+              "declaration": "var composerFieldBackground: Color",
+              "doc": "The rounded field the user types into.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerText",
+              "declaration": "var composerText: Color",
+              "doc": "The text being typed, and the labels of the long-press overlay's card rows.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerPlaceholderText",
+              "declaration": "var composerPlaceholderText: Color",
+              "doc": "The placeholder in an empty field.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerButtonTint",
+              "declaration": "var composerButtonTint: Color",
+              "doc": "The add and send buttons.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerCursor",
+              "declaration": "var composerCursor: Color",
+              "doc": "The text cursor in the field. Left `nil` in the initializer, it takes `composerButtonTint`\nwhen that is given, so a theme that sets only the button tint keeps one colour.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "replyBarCloseBackground",
+              "declaration": "var replyBarCloseBackground: Color",
+              "doc": "The circle behind the reply bar's close button. The bar's title uses `composerText`, its\npreview `replyQuoteText`, its background `composerFieldBackground`, and the close glyph\n`senderNameText`. It also fills a long-press overlay card row while it is pressed.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerDisabledTint",
+              "declaration": "var composerDisabledTint: Color",
+              "doc": "The placeholder and the add button while the composer is disabled.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "sendingIndicatorTint",
+              "declaration": "var sendingIndicatorTint: Color",
+              "doc": "The spinner beside a message that is still sending.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "failedIndicatorTint",
+              "declaration": "var failedIndicatorTint: Color",
+              "doc": "The error icon beside a message that failed to send, and destructive rows in the long-press\noverlay's card.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "frozenBannerBackground",
+              "declaration": "var frozenBannerBackground: Color",
+              "doc": "The banner at the top of a frozen channel.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "frozenBannerText",
+              "declaration": "var frozenBannerText: Color",
+              "doc": "The text of the frozen channel banner.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "overlayDim",
+              "declaration": "var overlayDim: Color",
+              "doc": "The tint over the messages and the composer while a long-pressed message shows the views\nof `ChannelView.messageLongPressOverlay(above:below:)`. The default is the same in light and\ndark. The card below the bubble takes its glass tint from `background`, its row labels from\n`messageFont` and `composerText` (`failedIndicatorTint` for destructive rows), and its pressed\nrow from `replyBarCloseBackground`; a host button with its own `.buttonStyle` keeps it.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "headerTitleFont",
+              "declaration": "var headerTitleFont: Font",
+              "doc": "The channel name in the navigation bar.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "messageFont",
+              "declaration": "var messageFont: Font",
+              "doc": "Text inside bubbles, and the labels of the long-press overlay's card rows.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "senderNameFont",
+              "declaration": "var senderNameFont: Font",
+              "doc": "The sender's name.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "replyQuoteFont",
+              "declaration": "var replyQuoteFont: Font",
+              "doc": "The quoted original above a reply's bubble. Its \"replied to\" line uses `senderNameFont`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "timeFont",
+              "declaration": "var timeFont: Font",
+              "doc": "The time beside a bubble.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "systemMessageFont",
+              "declaration": "var systemMessageFont: Font",
+              "doc": "Centered system lines.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "dateSeparatorFont",
+              "declaration": "var dateSeparatorFont: Font",
+              "doc": "The day above each day's first message. The time after it uses the same font at regular\nweight.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "composerFont",
+              "declaration": "var composerFont: Font",
+              "doc": "The text and placeholder in the composer.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "replyBarTitleFont",
+              "declaration": "var replyBarTitleFont: Font",
+              "doc": "The reply bar's \"Replying to\" title. Its preview uses `replyQuoteFont`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "frozenBannerFont",
+              "declaration": "var frozenBannerFont: Font",
+              "doc": "The frozen channel banner.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "init",
+              "name": "init(background:headerTitleText:incomingBubbleBackground:outgoingBubbleBackground:incomingMessageText:outgoingMessageText:senderNameText:replyQuoteText:replyQuoteBorder:timeText:systemMessageText:dateSeparatorBackground:dateSeparatorText:receiptSent:receiptDelivered:receiptRead:avatarPlaceholderBackground:avatarPlaceholderTint:broadcastCoverBackground:broadcastCoverTint:accent:placeholderTint:fileIconBackground:fileIconTint:mediaPlaceholderTint:mediaBadgeBackground:mediaBadgeTint:composerBackground:composerFieldBackground:composerText:composerPlaceholderText:composerButtonTint:composerCursor:replyBarCloseBackground:composerDisabledTint:sendingIndicatorTint:failedIndicatorTint:frozenBannerBackground:frozenBannerText:overlayDim:headerTitleFont:messageFont:senderNameFont:replyQuoteFont:timeFont:systemMessageFont:dateSeparatorFont:composerFont:replyBarTitleFont:frozenBannerFont:)",
+              "declaration": "init(background: Color? = nil, headerTitleText: Color? = nil, incomingBubbleBackground: Color? = nil, outgoingBubbleBackground: Color? = nil, incomingMessageText: Color? = nil, outgoingMessageText: Color? = nil, senderNameText: Color? = nil, replyQuoteText: Color? = nil, replyQuoteBorder: Color? = nil, timeText: Color? = nil, systemMessageText: Color? = nil, dateSeparatorBackground: Color? = nil, dateSeparatorText: Color? = nil, receiptSent: Color? = nil, receiptDelivered: Color? = nil, receiptRead: Color? = nil, avatarPlaceholderBackground: Color? = nil, avatarPlaceholderTint: Color? = nil, broadcastCoverBackground: Color? = nil, broadcastCoverTint: Color? = nil, accent: Color? = nil, placeholderTint: Color? = nil, fileIconBackground: Color? = nil, fileIconTint: Color? = nil, mediaPlaceholderTint: Color? = nil, mediaBadgeBackground: Color? = nil, mediaBadgeTint: Color? = nil, composerBackground: Color? = nil, composerFieldBackground: Color? = nil, composerText: Color? = nil, composerPlaceholderText: Color? = nil, composerButtonTint: Color? = nil, composerCursor: Color? = nil, replyBarCloseBackground: Color? = nil, composerDisabledTint: Color? = nil, sendingIndicatorTint: Color? = nil, failedIndicatorTint: Color? = nil, frozenBannerBackground: Color? = nil, frozenBannerText: Color? = nil, overlayDim: Color? = nil, headerTitleFont: Font? = nil, messageFont: Font? = nil, senderNameFont: Font? = nil, replyQuoteFont: Font? = nil, timeFont: Font? = nil, systemMessageFont: Font? = nil, dateSeparatorFont: Font? = nil, composerFont: Font? = nil, replyBarTitleFont: Font? = nil, frozenBannerFont: Font? = nil)",
+              "doc": "Creates a theme. Anything left `nil` falls back to the light-appearance default.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "type.property",
+              "name": "light",
+              "declaration": "static let light: ChannelTheme",
+              "doc": "The light appearance.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "type.property",
+              "name": "dark",
+              "declaration": "static let dark: ChannelTheme",
+              "doc": "The dark appearance.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "type.property",
+              "name": "adaptive",
+              "declaration": "static let adaptive: ChannelTheme",
+              "doc": "Follows the system appearance. This is the default.\n\n- Since: 1.0.0"
+            }
+          ]
+        }
+      },
+      "contextValues": [
+        {
+          "kind": "struct",
+          "name": "ComposerContext",
+          "declaration": "struct ComposerContext",
+          "conformances": [
+            "Sendable"
+          ],
+          "doc": "What a composer slot or the empty state needs: whether the user can send now, whether a response\nis in progress, and the actions the default composer uses, such as opening the attachment pickers.\n\n`composerLeadingItems(_:)`, `composerTrailingItems(_:)`, `composer(_:)`, and\n`channelEmptyState(_:)` pass one to the host's closure.\nIt carries actions, so it is not `Hashable`.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "property",
+              "name": "canSend",
+              "declaration": "@MainActor let canSend: Bool",
+              "doc": "Whether a send is accepted now. `false` while the messages load, during a retry, and in a\nchannel that does not allow sending. Composer items are disabled while it is `false`; a\nview passed to `composer(_:)` disables its own controls.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "isUnavailable",
+              "declaration": "@MainActor let isUnavailable: Bool",
+              "doc": "Whether the channel itself does not allow sending, as opposed to the messages still\nloading. Use `canSend` to enable controls, and this only to explain why they are disabled.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "canOpenCamera",
+              "declaration": "@MainActor let canOpenCamera: Bool",
+              "doc": "Whether `openCamera()` can show the camera: the device has one and the app's Info.plist\ndeclares `NSCameraUsageDescription`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "replyingTo",
+              "declaration": "@MainActor let replyingTo: ChatMessage?",
+              "doc": "The message the user is answering, or `nil`. While it is set, `send(text:)` and attachments\npicked from the composer send replies to it.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "isResponding",
+              "declaration": "@MainActor let isResponding: Bool",
+              "doc": "Whether a response is in progress, as passed to `composerStopButton(isResponding:action:)`.\nWhile it is `true` the default composer shows a stop button in place of send; draw your own\nfrom it in a `composer(_:)` view. It does not change `canSend`.\n\n```swift\nif context.isResponding {\n    Button(\"Stop\") { context.stop() }\n}\n```\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "defaultItems",
+              "declaration": "@ViewBuilder @MainActor var defaultItems: some View { get }",
+              "doc": "The items the composer shows on this side when you do not set it: the attachment (+)\nbutton on the leading side, nothing on the trailing side. Put it in your closure to keep\nthem. Empty in `composer(_:)` and `channelEmptyState(_:)`; use `openAttachmentMenu()` for\nyour own + button there.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "send(text:)",
+              "declaration": "@MainActor func send(text: String)",
+              "doc": "Sends `text` as a message, trimmed of leading and trailing whitespace and newlines. It\nsends the given text, not the draft in the composer's field. While `replyingTo` is set it is\nsent as a reply, and the reply bar closes. Does nothing for empty text or while `canSend` is\n`false`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "cancelReply()",
+              "declaration": "@MainActor func cancelReply()",
+              "doc": "Stops answering `replyingTo` and closes the reply bar. The draft stays. Does nothing while\nno reply is being written.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "stop()",
+              "declaration": "@MainActor func stop()",
+              "doc": "Calls the action passed to `composerStopButton(isResponding:action:)`. It works while `canSend`\nis `false`. Does nothing while `isResponding` is `false`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "openAttachmentMenu()",
+              "declaration": "@MainActor func openAttachmentMenu()",
+              "doc": "Shows the attachment menu: Camera (when available), Photo library, and Files. Does nothing\nwhile `canSend` is `false`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "openCamera()",
+              "declaration": "@MainActor func openCamera()",
+              "doc": "Shows the camera. Does nothing unless `canOpenCamera` and `canSend` are `true`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "openPhotoLibrary()",
+              "declaration": "@MainActor func openPhotoLibrary()",
+              "doc": "Shows the photo library picker for images and videos. Does nothing while `canSend` is\n`false`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "openFiles()",
+              "declaration": "@MainActor func openFiles()",
+              "doc": "Shows the file picker. Does nothing while `canSend` is `false`.\n\n- Since: 1.0.0"
+            }
+          ]
+        },
+        {
+          "kind": "struct",
+          "name": "MessageActionContext",
+          "declaration": "struct MessageActionContext",
+          "conformances": [
+            "Sendable"
+          ],
+          "doc": "What a message signal's closure needs to know about its message, the actions it can take,\nand the package's default buttons for that signal.\n\n`messageContextMenu(_:)`, `failedMessageActions(_:)`, and `onMessageDoubleTapped(_:)` pass\none to the host's closure together with the message. Unlike `MessageRowContext`, it carries\nactions, so it is not `Hashable`. The views of `ChannelView.messageLongPressOverlay(above:below:)`\nreceive `MessageOverlayContext` instead, which adds `dismiss()` to the same state and actions.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "property",
+              "name": "isMine",
+              "declaration": "@MainActor let isMine: Bool",
+              "doc": "Whether the current user sent the message. See `MessageRowContext.isMine`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "canResend",
+              "declaration": "@MainActor let canResend: Bool",
+              "doc": "Whether `resend()` sends the message now: it failed and the current user can send.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "canCopy",
+              "declaration": "@MainActor let canCopy: Bool",
+              "doc": "Whether `copy()` has text to copy: the message's text is not empty.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "canReply",
+              "declaration": "@MainActor let canReply: Bool",
+              "doc": "Whether `reply()` starts a reply to the message: `ChatChannel.canReply` is `true`, the user\ncan send now, and the message is sent and is not a system message.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "defaultItems",
+              "declaration": "@MainActor var defaultItems: some View { get }",
+              "doc": "The buttons the screen shows for this signal when you do not set it, fitted to the\nmessage: Retry (while `canResend`) and Remove for a failed message, and on a long press\nReply (while `canReply`) and Copy (for a message with text) for any other message. Empty\nfor a double tap, which shows nothing. Put it in your closure to keep them.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "resend()",
+              "declaration": "@MainActor func resend()",
+              "doc": "Sends a failed message again. Does nothing unless `canResend` is `true`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "remove()",
+              "declaration": "@MainActor func remove()",
+              "doc": "Removes a failed message. Does nothing for a message that has not failed.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "reply()",
+              "declaration": "@MainActor func reply()",
+              "doc": "Starts a reply to the message: the composer shows a reply bar, and the next message sent\nanswers this one. Does nothing unless `canReply` is `true`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "copy()",
+              "declaration": "@MainActor func copy()",
+              "doc": "Copies the message's text to the general pasteboard. Does nothing unless `canCopy` is\n`true`.\n\n- Since: 1.0.0"
+            }
+          ]
+        },
+        {
+          "kind": "struct",
+          "name": "MessageDateSeparatorContext",
+          "declaration": "nonisolated struct MessageDateSeparatorContext",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "What the date separator above the first message of each day shows.\n\n`day` and `time` are the default separator's texts, so a custom separator can restyle them\nwithout formatting `date` again.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "property",
+              "name": "date",
+              "declaration": "var date: Date",
+              "doc": "When the day's first message was sent.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "day",
+              "declaration": "var day: String",
+              "doc": "The day as the default separator writes it: \"Today\", \"Yesterday\", \"Wed, Nov 15\" this\nyear, or \"Nov 14, 2023\" in a past year.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "time",
+              "declaration": "var time: String",
+              "doc": "The time of the day's first message as the default separator writes it, such as\n\"10:13 PM\".\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "init",
+              "name": "init(date:day:time:)",
+              "declaration": "init(date: Date, day: String, time: String)",
+              "doc": "Creates a context, for example to preview a custom separator.\n\n- Since: 1.0.0"
+            }
+          ]
+        },
+        {
+          "kind": "struct",
+          "name": "MessageOverlayContext",
+          "declaration": "struct MessageOverlayContext",
+          "conformances": [
+            "Sendable"
+          ],
+          "doc": "What the views of `ChannelView.messageLongPressOverlay(above:below:)` need to know about the\nlong-pressed message, the actions they can take, the long-press menu's default buttons, and a\nway to close the overlay.\n\nIt carries the same state and actions as `MessageActionContext`, plus `dismiss()`. A button\nyou add does not close the overlay by itself, so call `dismiss()` when it finishes. Unlike\n`MessageRowContext`, it carries actions, so it is not `Hashable`.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "property",
+              "name": "isMine",
+              "declaration": "@MainActor var isMine: Bool { get }",
+              "doc": "Whether the current user sent the message. See `MessageRowContext.isMine`.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "canResend",
+              "declaration": "@MainActor var canResend: Bool { get }",
+              "doc": "Whether `resend()` sends the message now: it failed and the current user can send.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "canCopy",
+              "declaration": "@MainActor var canCopy: Bool { get }",
+              "doc": "Whether `copy()` has text to copy: the message's text is not empty.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "canReply",
+              "declaration": "@MainActor var canReply: Bool { get }",
+              "doc": "Whether `reply()` starts a reply to the message: `ChatChannel.canReply` is `true`, the user\ncan send now, and the message is sent and is not a system message.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "defaultItems",
+              "declaration": "@MainActor var defaultItems: some View { get }",
+              "doc": "The long-press menu's default buttons, fitted to the message: Retry (while `canResend`)\nand Remove for a failed message; for any other message, Reply (while `canReply`) and Copy\n(for a message with text). Each one closes the overlay after it acts. Put it in the\n`below:` closure to keep them.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "dismiss()",
+              "declaration": "@MainActor func dismiss()",
+              "doc": "Closes the overlay, putting the bubble back in the list. Call it from your buttons when\nthey finish.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "resend()",
+              "declaration": "@MainActor func resend()",
+              "doc": "Sends a failed message again. Does nothing unless `canResend` is `true`. Does not close\nthe overlay.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "remove()",
+              "declaration": "@MainActor func remove()",
+              "doc": "Removes a failed message. Does nothing for a message that has not failed. Does not close\nthe overlay.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "reply()",
+              "declaration": "@MainActor func reply()",
+              "doc": "Starts a reply to the message: the composer shows a reply bar, and the next message sent\nanswers this one. Does nothing unless `canReply` is `true`. Does not close the overlay.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "copy()",
+              "declaration": "@MainActor func copy()",
+              "doc": "Copies the message's text to the general pasteboard. Does nothing unless `canCopy` is\n`true`. Does not close the overlay.\n\n- Since: 1.0.0"
+            }
+          ]
+        },
+        {
+          "kind": "struct",
+          "name": "MessageRowContext",
+          "declaration": "nonisolated struct MessageRowContext",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "What a message slot needs to know about where its message sits on screen.\n\nThe message itself carries the content; this carries what the screen derived from the\nmessages around it.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "enum",
+              "name": "MessageRowContext.GroupPosition",
+              "declaration": "enum GroupPosition",
+              "conformances": [
+                "Equatable",
+                "Hashable",
+                "Sendable"
+              ],
+              "doc": "Where a message sits in a run of messages one person sent within the same minute. A reply\n(a message with `replyTo`) always starts a new run, so its quote never sits between two\nbubbles of one run.\n\nFor someone else's messages the default row puts the name on `.single` and `.first`, and\nthe picture and time on `.single` and `.last`. For the current user's messages it shows no\nname or picture, and puts the time and receipt on `.single` and `.last`.\n\n- Since: 1.0.0",
+              "members": [
+                {
+                  "kind": "enum.case",
+                  "name": "single",
+                  "declaration": "case single",
+                  "doc": "Alone: no neighbor joins it.\n\n- Since: 1.0.0"
+                },
+                {
+                  "kind": "enum.case",
+                  "name": "first",
+                  "declaration": "case first",
+                  "doc": "The oldest message of a run, at its top.\n\n- Since: 1.0.0"
+                },
+                {
+                  "kind": "enum.case",
+                  "name": "middle",
+                  "declaration": "case middle",
+                  "doc": "Between the first and the last.\n\n- Since: 1.0.0"
+                },
+                {
+                  "kind": "enum.case",
+                  "name": "last",
+                  "declaration": "case last",
+                  "doc": "The newest message of a run, at its bottom.\n\n- Since: 1.0.0"
+                }
+              ]
+            },
+            {
+              "kind": "property",
+              "name": "isMine",
+              "declaration": "var isMine: Bool",
+              "doc": "Whether the current user sent the message.\n\nA pending or failed message is always the current user's. A sent message is the current\nuser's only when its sender's id equals the screen's current user id, so without a current\nuser id every sent message is someone else's.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "groupPosition",
+              "declaration": "var groupPosition: GroupPosition",
+              "doc": "Where the message sits in its run.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "init",
+              "name": "init(isMine:groupPosition:)",
+              "declaration": "init(isMine: Bool, groupPosition: GroupPosition)",
+              "doc": "Creates a context, for example to preview a custom row.\n\n- Since: 1.0.0"
+            }
+          ]
+        }
+      ],
+      "domainTypes": [
+        "ChatAttachment",
+        "ChatChannel",
+        "ChatMessage",
+        "ChatSender"
+      ],
+      "backendBoundary": [
+        "ChannelRepository"
+      ]
+    }
+  ],
+  "domainTypes": [
+    {
+      "kind": "struct",
+      "name": "ChatAttachment",
+      "declaration": "struct ChatAttachment",
+      "conformances": [
+        "Equatable",
+        "Hashable",
+        "Identifiable",
+        "Sendable"
+      ],
+      "doc": "A file attached to an ordinary message, without download or rendering state.\n\n- Since: 1.0.0",
+      "members": [
+        {
+          "kind": "struct",
+          "name": "ChatAttachment.ImageSize",
+          "declaration": "struct ImageSize",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "An image's dimensions in pixels, available before the image loads.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "property",
+              "name": "width",
+              "declaration": "var width: Int",
+              "doc": "The pixel width.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "height",
+              "declaration": "var height: Int",
+              "doc": "The pixel height.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "init",
+              "name": "init(width:height:)",
+              "declaration": "init(width: Int, height: Int)",
+              "doc": "Creates pixel dimensions supplied by the backend adapter.\n\n- Since: 1.0.0"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "id",
+          "declaration": "var id: String",
+          "doc": "The attachment's identity within its message.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "kind",
+          "declaration": "var kind: ChatMessage.FileKind",
+          "doc": "The file classification supplied by the backend adapter.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "url",
+          "declaration": "var url: URL",
+          "doc": "The URL from which the attachment can be read.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "fileName",
+          "declaration": "var fileName: String?",
+          "doc": "The display file name, or `nil` when unavailable.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "fileSize",
+          "declaration": "var fileSize: Int64?",
+          "doc": "The file size in bytes, or `nil` when unavailable.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "imageSize",
+          "declaration": "var imageSize: ImageSize?",
+          "doc": "Image dimensions in pixels, or `nil` when unavailable.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(id:kind:url:fileName:fileSize:imageSize:)",
+          "declaration": "init(id: String, kind: ChatMessage.FileKind, url: URL, fileName: String? = nil, fileSize: Int64? = nil, imageSize: ImageSize? = nil)",
+          "doc": "Creates an attachment from backend-neutral file metadata.\n\n- Since: 1.0.0"
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChatChannel",
+      "declaration": "struct ChatChannel",
+      "conformances": [
+        "Equatable",
+        "Hashable",
+        "Identifiable",
+        "Sendable"
+      ],
+      "doc": "A conversation, whatever kind the backend calls it.\n\nFeatures a channel does not offer are `nil` or `false` rather than implied by a channel type,\nso the UI decides what to show from these values alone.\n\n- Since: 1.0.0",
+      "members": [
+        {
+          "kind": "enum",
+          "name": "ChatChannel.NotificationLevel",
+          "declaration": "enum NotificationLevel",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "When the current user is notified about new messages.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "enum.case",
+              "name": "all",
+              "declaration": "case all"
+            },
+            {
+              "kind": "enum.case",
+              "name": "mentionsOnly",
+              "declaration": "case mentionsOnly"
+            },
+            {
+              "kind": "enum.case",
+              "name": "off",
+              "declaration": "case off"
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "id",
+          "declaration": "var id: String",
+          "doc": "- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "name",
+          "declaration": "var name: String?",
+          "doc": "The name a user gave the channel, or `nil` when it has none.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "coverURL",
+          "declaration": "var coverURL: URL?",
+          "doc": "The cover a user set, or `nil` when it has none.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "createdAt",
+          "declaration": "var createdAt: Date",
+          "doc": "- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "memberCount",
+          "declaration": "var memberCount: Int?",
+          "doc": "The number of members, or `nil` when the backend does not count them.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "members",
+          "declaration": "var members: [ChatSender]",
+          "doc": "The members the backend knows about.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "lastMessage",
+          "declaration": "var lastMessage: ChatMessage?",
+          "doc": "The latest sent message, or `nil` when there is none.\n\nLeave pending and failed messages out: the channel list draws this message with no\nsending status, so an unsent one would read as delivered.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "typingUsers",
+          "declaration": "var typingUsers: [ChatSender]",
+          "doc": "The users typing right now.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "unreadMessageCount",
+          "declaration": "var unreadMessageCount: Int?",
+          "doc": "The number of unread messages, or `nil` when the backend does not count them.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "unreadMentionCount",
+          "declaration": "var unreadMentionCount: Int?",
+          "doc": "The number of unread mentions, or `nil` when the backend does not count them.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "notificationLevel",
+          "declaration": "var notificationLevel: NotificationLevel?",
+          "doc": "The current user's notification level, or `nil` when it cannot be changed.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "isBroadcast",
+          "declaration": "var isBroadcast: Bool",
+          "doc": "Only operators can send messages.\n\nDescribes the channel for display. Whether the current user can send is `canSendMessage`.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "isFrozen",
+          "declaration": "var isFrozen: Bool",
+          "doc": "Nobody can send messages.\n\nDescribes the channel for display. Whether the current user can send is `canSendMessage`.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "canLeave",
+          "declaration": "var canLeave: Bool",
+          "doc": "The current user can leave the channel.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "canSendMessage",
+          "declaration": "var canSendMessage: Bool",
+          "doc": "The current user can send messages now.\n\nFolds every backend rule into one value: a frozen channel, a broadcast channel for a\nnon-operator, and a muted member are all `false`. Set it together with `isFrozen` and\n`isBroadcast`.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "canReply",
+          "declaration": "var canReply: Bool",
+          "doc": "The current user can reply to messages in this channel.\n\nSet it only when your repository sends replies: the screen offers no reply action while it\nis `false`, and never passes `replyTo` to the repository. Sending still depends on\n`canSendMessage`. Quotes of existing replies are drawn either way.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(id:name:coverURL:createdAt:memberCount:members:lastMessage:typingUsers:unreadMessageCount:unreadMentionCount:notificationLevel:isBroadcast:isFrozen:canLeave:canSendMessage:canReply:)",
+          "declaration": "init(id: String, name: String? = nil, coverURL: URL? = nil, createdAt: Date, memberCount: Int? = nil, members: [ChatSender] = [], lastMessage: ChatMessage? = nil, typingUsers: [ChatSender] = [], unreadMessageCount: Int? = nil, unreadMentionCount: Int? = nil, notificationLevel: NotificationLevel? = nil, isBroadcast: Bool = false, isFrozen: Bool = false, canLeave: Bool = false, canSendMessage: Bool = true, canReply: Bool = false)",
+          "doc": "- Since: 1.0.0"
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChatMessage",
+      "declaration": "struct ChatMessage",
+      "conformances": [
+        "Equatable",
+        "Hashable",
+        "Identifiable",
+        "Sendable"
+      ],
+      "doc": "A message, carrying what a channel list preview and a message list need.\n\nA message that changes in place, such as an edit or streamed text, comes back with the same\n`id`.\n\n- Since: 1.0.0",
+      "members": [
+        {
+          "kind": "enum",
+          "name": "ChatMessage.Content",
+          "declaration": "enum Content",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "What the message holds.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "enum.case",
+              "name": "text(_:)",
+              "declaration": "case text(String)",
+              "doc": "Text written by a user."
+            },
+            {
+              "kind": "enum.case",
+              "name": "system(_:)",
+              "declaration": "case system(String)",
+              "doc": "Text written by the backend, such as \"Alice joined\"."
+            },
+            {
+              "kind": "enum.case",
+              "name": "file(_:)",
+              "declaration": "case file(FileKind)",
+              "doc": "A single file."
+            },
+            {
+              "kind": "enum.case",
+              "name": "files",
+              "declaration": "case files",
+              "doc": "Several files sent together."
+            },
+            {
+              "kind": "enum.case",
+              "name": "unsupported",
+              "declaration": "case unsupported",
+              "doc": "Anything this package cannot show."
+            }
+          ]
+        },
+        {
+          "kind": "enum",
+          "name": "ChatMessage.FileKind",
+          "declaration": "enum FileKind",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "What kind of file a file message carries. The backend decides, not the UI.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "enum.case",
+              "name": "image",
+              "declaration": "case image"
+            },
+            {
+              "kind": "enum.case",
+              "name": "gif",
+              "declaration": "case gif"
+            },
+            {
+              "kind": "enum.case",
+              "name": "video",
+              "declaration": "case video"
+            },
+            {
+              "kind": "enum.case",
+              "name": "audio",
+              "declaration": "case audio"
+            },
+            {
+              "kind": "enum.case",
+              "name": "voice",
+              "declaration": "case voice",
+              "doc": "A recorded voice message."
+            },
+            {
+              "kind": "enum.case",
+              "name": "other",
+              "declaration": "case other"
+            }
+          ]
+        },
+        {
+          "kind": "enum",
+          "name": "ChatMessage.Receipt",
+          "declaration": "enum Receipt",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "How far the message has reached the other members.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "enum.case",
+              "name": "sent",
+              "declaration": "case sent"
+            },
+            {
+              "kind": "enum.case",
+              "name": "delivered",
+              "declaration": "case delivered"
+            },
+            {
+              "kind": "enum.case",
+              "name": "read",
+              "declaration": "case read"
+            }
+          ]
+        },
+        {
+          "kind": "enum",
+          "name": "ChatMessage.SendingStatus",
+          "declaration": "enum SendingStatus",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "How far a message sent from this device has got.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "enum.case",
+              "name": "pending",
+              "declaration": "case pending",
+              "doc": "The message is on its way to the backend."
+            },
+            {
+              "kind": "enum.case",
+              "name": "failed",
+              "declaration": "case failed",
+              "doc": "The message did not reach the backend. It can be resent or removed."
+            }
+          ]
+        },
+        {
+          "kind": "property",
+          "name": "id",
+          "declaration": "var id: String",
+          "doc": "- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "sender",
+          "declaration": "var sender: ChatSender?",
+          "doc": "The sender, or `nil` for messages the backend wrote itself.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "createdAt",
+          "declaration": "var createdAt: Date",
+          "doc": "- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "content",
+          "declaration": "var content: Content",
+          "doc": "- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "attachments",
+          "declaration": "var attachments: [ChatAttachment]",
+          "doc": "Files accompanying an ordinary message's content, in display order.\n\nSystem notice rendering does not use attachments.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "customContent",
+          "declaration": "var customContent: CustomContent?",
+          "doc": "An app-defined value rendered by a matching channel slot. `content` supplies the fallback.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "attributes",
+          "declaration": "var attributes: Attributes",
+          "doc": "App-defined state, such as \"reported\", kept apart from `customContent`, which picks the\nrenderer.\n\nThe adapter sets it from the backend. Set it after creating the message. No default view\nreads it.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "receipt",
+          "declaration": "var receipt: Receipt?",
+          "doc": "The delivery state, or `nil` when the backend does not track receipts for this message.\n\nApplies only once `sendingStatus` is `nil`.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "sendingStatus",
+          "declaration": "var sendingStatus: SendingStatus?",
+          "doc": "The sending state of a message sent from this device, or `nil` once it reached the\nbackend and for every message sent elsewhere.\n\nThe adapter owns this value and carries it in snapshots. Set it after creating the message.\nA pending message that is sent keeps its `id` and only loses this status.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "replyTo",
+          "declaration": "var replyTo: ReplyReference?",
+          "doc": "The message this one answers, or `nil` for an ordinary message.\n\nFill it from the backend's reply link for every message that has one, including other\nusers' messages and messages on earlier pages. Set it after creating the message.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(id:sender:createdAt:content:receipt:)",
+          "declaration": "init(id: String, sender: ChatSender? = nil, createdAt: Date, content: Content, receipt: Receipt? = nil)",
+          "doc": "- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(id:sender:createdAt:content:customContent:receipt:)",
+          "declaration": "init<Value>(id: String, sender: ChatSender? = nil, createdAt: Date, content: Content = .unsupported, customContent: Value, receipt: Receipt? = nil) where Value : Hashable, Value : Sendable",
+          "doc": "Creates a message carrying an app-defined value without adding a new `Content` case.\n\n`content` supplies the channel list preview and the row shown without a matching renderer.\nKeep the same `id` when updating the custom value in place.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(id:sender:createdAt:text:attachments:receipt:)",
+          "declaration": "init(id: String, sender: ChatSender? = nil, createdAt: Date, text: String = \"\", attachments: [ChatAttachment], receipt: Receipt? = nil)",
+          "doc": "Creates an ordinary message with a text body and an ordered attachment list.\n\nAn empty body supports attachment-only messages; an empty list supports text-only messages.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(id:sender:createdAt:text:attachments:customContent:receipt:)",
+          "declaration": "init<Value>(id: String, sender: ChatSender? = nil, createdAt: Date, text: String = \"\", attachments: [ChatAttachment], customContent: Value, receipt: Receipt? = nil) where Value : Hashable, Value : Sendable",
+          "doc": "Creates an ordinary message combining text, attachments, and an app-defined value.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "struct",
+          "name": "ChatMessage.Attributes",
+          "declaration": "struct Attributes",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "App-defined state about a message, such as \"reported\" or \"pinned\", holding at most one\nvalue per type.\n\nAttributes never pick a renderer; `customContent` does. Read and write a value by its type:\n\n```swift\nmessage.attributes[Moderation.self]?.isReported\nmessage.attributes[Moderation.self] = Moderation(isReported: true)\nmessage.attributes[Moderation.self] = nil\n```\n\nEquality compares every type and value, so a changed attribute in a snapshot with the same\nmessage `id` updates the row in place.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "init",
+              "name": "init()",
+              "declaration": "init()",
+              "doc": "Creates an empty set of attributes.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "subscript",
+              "name": "subscript(_:)",
+              "declaration": "subscript<Value>(type: Value.Type) -> Value? where Value : Hashable, Value : Sendable { get set }",
+              "doc": "The value stored for `type`, or `nil` if there is none. Assigning `nil` removes it.\n\n- Since: 1.0.0"
+            }
+          ]
+        },
+        {
+          "kind": "struct",
+          "name": "ChatMessage.CustomContent",
+          "declaration": "struct CustomContent",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "Preserves an app-defined value and its concrete type for custom message rendering.\n\nEquality compares both the type and the value, so payload updates invalidate message rows.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "init",
+              "name": "init(_:)",
+              "declaration": "init<Value>(_ value: Value) where Value : Hashable, Value : Sendable",
+              "doc": "Stores a value that can safely cross concurrency boundaries and participate in diffing.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "value(as:)",
+              "declaration": "func value<Value>(as type: Value.Type) -> Value? where Value : Hashable, Value : Sendable",
+              "doc": "Retrieves the original value, or `nil` if it has a different concrete type.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "func.op",
+              "name": "==(_:_:)",
+              "declaration": "static func == (lhs: `Self`, rhs: `Self`) -> Bool",
+              "doc": "Compares the concrete types and their stored values.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "method",
+              "name": "hash(into:)",
+              "declaration": "func hash(into hasher: inout Hasher)",
+              "doc": "Hashes the concrete type and its stored value.\n\n- Since: 1.0.0"
+            }
+          ]
+        },
+        {
+          "kind": "struct",
+          "name": "ChatMessage.ReplyReference",
+          "declaration": "struct ReplyReference",
+          "conformances": [
+            "Equatable",
+            "Hashable",
+            "Sendable"
+          ],
+          "doc": "What a reply shows of the message it answers.\n\nA summary rather than the original message: it carries what a quote draws, so a quote can\nbe drawn even when the original is on a page the screen has not read, and a receipt or\nattribute change on the original does not redraw every reply to it. `content` and\n`attachments` mean what they mean on `ChatMessage`; for a custom message, use its `content`\nfallback. When the original is edited or deleted, send the reply again with the same `id`\nand an updated reference.\n\n- Since: 1.0.0",
+          "members": [
+            {
+              "kind": "property",
+              "name": "messageID",
+              "declaration": "var messageID: String",
+              "doc": "The `id` of the message being answered. It stays when the original becomes unavailable.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "sender",
+              "declaration": "var sender: ChatSender?",
+              "doc": "The original's sender, or `nil` when the backend wrote it or it is unavailable.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "content",
+              "declaration": "var content: Content",
+              "doc": "- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "attachments",
+              "declaration": "var attachments: [ChatAttachment]",
+              "doc": "- Since: 1.0.0"
+            },
+            {
+              "kind": "property",
+              "name": "isUnavailable",
+              "declaration": "var isUnavailable: Bool",
+              "doc": "The original can no longer be shown, because it was deleted or the current user cannot\nsee it. Leave `content` and `attachments` empty; the quote then shows its unavailable\ntext.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "init",
+              "name": "init(messageID:sender:content:attachments:)",
+              "declaration": "init(messageID: String, sender: ChatSender? = nil, content: Content, attachments: [ChatAttachment] = [])",
+              "doc": "Creates a reference to an original that can be shown.\n\n- Since: 1.0.0"
+            },
+            {
+              "kind": "type.method",
+              "name": "unavailable(messageID:)",
+              "declaration": "static func unavailable(messageID: String) -> ReplyReference",
+              "doc": "Creates a reference to an original that was deleted or that the current user cannot see.\n\n- Since: 1.0.0"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "struct",
+      "name": "ChatSender",
+      "declaration": "struct ChatSender",
+      "conformances": [
+        "Equatable",
+        "Hashable",
+        "Identifiable",
+        "Sendable"
+      ],
+      "doc": "A participant that can send messages, such as a person, bot, or agent.\n\n- Since: 1.0.0",
+      "members": [
+        {
+          "kind": "property",
+          "name": "id",
+          "declaration": "var id: String",
+          "doc": "- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "name",
+          "declaration": "var name: String?",
+          "doc": "The display name, or `nil` when the sender has no display name.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "property",
+          "name": "profileImageURL",
+          "declaration": "var profileImageURL: URL?",
+          "doc": "The sender's picture, or `nil` when no picture is available.\n\n- Since: 1.0.0"
+        },
+        {
+          "kind": "init",
+          "name": "init(id:name:profileImageURL:)",
+          "declaration": "init(id: String, name: String? = nil, profileImageURL: URL? = nil)",
+          "doc": "- Since: 1.0.0"
+        }
+      ]
+    }
+  ]
+}

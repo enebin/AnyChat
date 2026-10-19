@@ -1,0 +1,23 @@
+{
+  "v": 3,
+  "createdOnFiles": {"v": 1, "at": "2026-10-16T12:40:00+09:00"},
+  "title": "Messages UI",
+  "launch": {"view": "canvas"},
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {"x": 0, "y": 0, "w": 402, "h": 874, "title": "Conversations list", "radius": 40},
+    "Channel.dc.html": {"x": 482, "y": 0, "w": 402, "h": 874, "title": "Conversation", "radius": 40},
+    "ChannelKeyboard.dc.html": {"x": 964, "y": 0, "w": 402, "h": 874, "title": "Conversation, keyboard up", "radius": 40},
+    "Replies.dc.html": {"x": 0, "y": 1274, "w": 402, "h": 874, "title": "Transcript with replies", "radius": 40},
+    "Replying.dc.html": {"x": 482, "y": 1274, "w": 402, "h": 874, "title": "Composer while replying", "radius": 40},
+    "Specs.dc.html": {"x": 964, "y": 1274, "w": 760, "h": 874, "title": "Reply specs"},
+    "KitSpecs.dc.html": {"x": 0, "y": 2548, "w": 1366, "h": 874, "title": "Kit specs"}
+  },
+  "order": ["Main.dc.html", "Channel.dc.html", "ChannelKeyboard.dc.html", "Replies.dc.html", "Replying.dc.html", "Specs.dc.html", "KitSpecs.dc.html"],
+  "notes": {
+    "screens": {"x": 0, "y": -260, "text": "Screens on the iOS 26 Messages kit", "kind": "title1", "maxW": 1366},
+    "source": {"x": 0, "y": 1014, "text": "Replies (new, built from kit values)", "kind": "title1", "maxW": 1724},
+    "kit": {"x": 0, "y": 2288, "text": "Kit values", "kind": "title1", "maxW": 1366}
+  },
+  "designSystems": []
+}

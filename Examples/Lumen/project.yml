@@ -1,0 +1,64 @@
+name: Lumen
+
+options:
+  bundleIdPrefix: io.github.enebin
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_APPROACHABLE_CONCURRENCY: YES
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+packages:
+  AnyChat:
+    path: ../..
+
+targets:
+  Lumen:
+    type: application
+    platform: iOS
+    sources:
+      - path: Lumen
+      - path: ../QuickStart/Shared/Media
+        buildPhase: resources
+    dependencies:
+      - package: AnyChat
+        product: AnyChatUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.enebin.lumen
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_NSCameraUsageDescription: Take photos to ask about in a chat.
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Record sound with videos you send in a chat.
+        TARGETED_DEVICE_FAMILY: "1"
+
+  LumenTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: LumenTests
+    dependencies:
+      - target: Lumen
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.enebin.lumen.tests
+        GENERATE_INFOPLIST_FILE: YES
+        SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated
+
+schemes:
+  Lumen:
+    build:
+      targets:
+        Lumen: all
+        LumenTests: [test]
+    test:
+      config: Debug
+      targets:
+        - LumenTests

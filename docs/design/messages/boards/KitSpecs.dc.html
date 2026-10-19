@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kit specs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #E5E5EA;vertical-align:top;font-size:13px;line-height:18px}
+th{font-weight:600;color:#3C3C43}
+td.v{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:#1C1C1E}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:6px;box-shadow:0 0 0 0.5px rgba(0,0,0,0.2)}
+</style>
+</helmet>
+<div style="width: 1366px; height: 874px; box-sizing: border-box; padding: 40px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; color: #000000; font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif">
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <h1 style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 700">Kit values</h1>
+    <p style="margin: 0; font-size: 14px; line-height: 20px; color: #3C3C43">Read from Messages.sketch (iOS 26 Messages kit, changelog 26.1) and its Apple iOS 26 UI Kit library symbols. Frames are on a 402 × 874 screen.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px">
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-size: 16px; line-height: 21px; font-weight: 600">Color</h2>
+      <table>
+        <tr><th>Role</th><th>Light</th><th>Dark</th></tr>
+        <tr><td>Background</td><td class="v"><span class="sw" style="background: #FFFFFF"></span>#FFFFFF</td><td class="v"><span class="sw" style="background: #000000"></span>#000000</td></tr>
+        <tr><td>Label</td><td class="v"><span class="sw" style="background: #000000"></span>#000000</td><td class="v"><span class="sw" style="background: #FFFFFF"></span>#FFFFFF</td></tr>
+        <tr><td>Secondary label</td><td class="v">rgba(60,60,67,.6)</td><td class="v">rgba(235,235,245,.6)</td></tr>
+        <tr><td>Tertiary (chevrons)</td><td class="v">rgba(60,60,67,.3)</td><td class="v">rgba(235,235,245,.3)</td></tr>
+        <tr><td>Placeholder</td><td class="v">rgba(60,60,67,.4)</td><td class="v">rgba(235,235,245,.4)</td></tr>
+        <tr><td>Outgoing bubble</td><td class="v"><span class="sw" style="background: #0088FF"></span>#0088FF</td><td class="v"><span class="sw" style="background: #0088FF"></span>#0088FF</td></tr>
+        <tr><td>Incoming bubble</td><td class="v"><span class="sw" style="background: #E9E9EA"></span>#E9E9EA</td><td class="v"><span class="sw" style="background: #262629"></span>#262629</td></tr>
+        <tr><td>Unread dot</td><td class="v"><span class="sw" style="background: #0088FF"></span>#0088FF</td><td class="v">#0088FF</td></tr>
+        <tr><td>Cursor</td><td class="v"><span class="sw" style="background: #0091FF"></span>#0091FF</td><td class="v">#0091FF</td></tr>
+        <tr><td>Row separator</td><td class="v">shadow 0,1 rgba(0,0,0,.12)</td><td class="v">—</td></tr>
+        <tr><td>Glass</td><td class="v">white 40% over #FAFAFA</td><td class="v">kit dark symbol</td></tr>
+      </table>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-size: 16px; line-height: 21px; font-weight: 600">Type (SF Pro)</h2>
+      <table>
+        <tr><th>Use</th><th>Style</th></tr>
+        <tr><td>Large title</td><td class="v">Bold 34 / 41</td></tr>
+        <tr><td>Bubble text</td><td class="v">Regular 17 / 22</td></tr>
+        <tr><td>List name</td><td class="v">Semibold 17 / 22</td></tr>
+        <tr><td>List preview</td><td class="v">Regular 15 / 20 · 2 lines · secondary</td></tr>
+        <tr><td>List time</td><td class="v">Regular 14 / 20 · secondary · chevron Semibold 13</td></tr>
+        <tr><td>Header name</td><td class="v">Bold 16 / 21</td></tr>
+        <tr><td>Field text</td><td class="v">Regular 16 / 19</td></tr>
+        <tr><td>Sender name</td><td class="v">Regular 11 / 13 · secondary</td></tr>
+        <tr><td>Timestamp</td><td class="v">Day Semibold 11 + time Regular 11 / 13 · secondary</td></tr>
+      </table>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-size: 16px; line-height: 21px; font-weight: 600">Layout</h2>
+      <table>
+        <tr><th>Part</th><th>Value</th></tr>
+        <tr><td>List top bar</td><td class="v">y 62 · height 105 · buttons 44 at x 16 / 342 · title x 16, y 116</td></tr>
+        <tr><td>List row</td><td class="v">height 79 · avatar 45 at x 26, y 16 · unread dot 10 at x 8 · text x 83, right inset 16 · name y 8 · preview y 30</td></tr>
+        <tr><td>List bottom bar</td><td class="v">y 794 · height 56 · search 286 × 48 at x 28 · button 48</td></tr>
+        <tr><td>Chat top bar</td><td class="v">height 137 · back / call 44 at y 54 · avatar 56 centered · name capsule 30 high, radius 15, padding 15</td></tr>
+        <tr><td>Transcript</td><td class="v">insets 16 · bubble max width 240 · same sender gap 8 · new sender gap 14 · timestamp 10 above and below</td></tr>
+        <tr><td>Bubble</td><td class="v">radius 20 · padding 9 / 14 · tail 25 × 12 on the last in a run</td></tr>
+        <tr><td>Composer, keyboard down</td><td class="v">height 70 · + 44 at x 28 · field 290 × 43 at x 84, radius 21.5</td></tr>
+        <tr><td>Composer, keyboard up</td><td class="v">height 60 · + 44 at x 16 · field 314 × 43 at x 72</td></tr>
+        <tr><td>Glass button</td><td class="v">44 × 44 · inner symbol 36</td></tr>
+      </table>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1366,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

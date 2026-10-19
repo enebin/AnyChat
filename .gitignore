@@ -1,0 +1,30 @@
+# Xcode
+DerivedData/
+build/
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+*.xcuserstate
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+
+# Tooling
+buildServer.json
+.Codex/
+!.codex/
+.codex/*
+!.codex/agents/
+.codex/agents/*
+!.codex/agents/*.toml
+.vscode/
+
+# MCP server
+MCP/node_modules/
+MCP/dist/
+!MCP/test/fixtures/*/App.xcodeproj
+MCP/demos/

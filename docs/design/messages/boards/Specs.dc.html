@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reply specs</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #E5E5EA;vertical-align:top;font-size:13px;line-height:18px}
+th{font-weight:600;color:#3C3C43}
+td.v{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:#1C1C1E}
+</style>
+</helmet>
+<div style="width: 760px; height: 874px; box-sizing: border-box; padding: 40px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; color: #000000; font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif">
+  <div style="display: flex; flex-direction: column; gap: 6px">
+    <h1 style="margin: 0; font-size: 26px; line-height: 32px; font-weight: 700">Reply specs</h1>
+    <p style="margin: 0; font-size: 14px; line-height: 20px; color: #3C3C43">Kit values are read from Messages.sketch (iOS 26 Messages kit). The kit has no reply parts, so the quote and the reply bar are new, built from kit values. Light values; dark values follow the kit's dark symbols.</p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px">
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-size: 16px; line-height: 21px; font-weight: 600">From the kit</h2>
+      <table>
+        <tr><th>Part</th><th>Value</th></tr>
+        <tr><td>Bubble</td><td class="v">radius 20 · padding 9 / 14 · tail 25×12</td></tr>
+        <tr><td>Bubble text</td><td class="v">SF Pro Regular 17 / 22</td></tr>
+        <tr><td>Incoming fill</td><td class="v">#E9E9EA · dark #262629</td></tr>
+        <tr><td>Outgoing fill</td><td class="v">#0088FF · text #FFFFFF</td></tr>
+        <tr><td>Sender name, time</td><td class="v">SF Pro 11 / 13 · rgba(60,60,67,.6) · dark rgba(235,235,245,.6) · inset 12</td></tr>
+        <tr><td>Toolbar button</td><td class="v">44×44 glass circle</td></tr>
+        <tr><td>Field</td><td class="v">height 43 · radius 21.5 · text 16 / 19 · placeholder rgba(60,60,67,.4)</td></tr>
+        <tr><td>Glass</td><td class="v">#FAFAFA under white 40% · hairline + soft shadow</td></tr>
+      </table>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <h2 style="margin: 0; font-size: 16px; line-height: 21px; font-weight: 600">New for replies</h2>
+      <table>
+        <tr><th>Part</th><th>Value</th></tr>
+        <tr><td>"Replied to" line</td><td class="v">sender name style · same inset 12 · aligned with the bubble's side</td></tr>
+        <tr><td>Quote</td><td class="v">radius 18 · padding 7 / 12 · 1pt border rgba(60,60,67,.29) · no fill, no tail · max width 240</td></tr>
+        <tr><td>Quote text</td><td class="v">SF Pro 15 / 20 · rgba(60,60,67,.78) · 2 lines max</td></tr>
+        <tr><td>Quote, media</td><td class="v">first image 56×56 · radius 12</td></tr>
+        <tr><td>Quote, unavailable</td><td class="v">"Original message unavailable" · dashed border · secondary text</td></tr>
+        <tr><td>Spacing</td><td class="v">line → quote → bubble: 4 · reply block top: 14</td></tr>
+        <tr><td>Reply bar</td><td class="v">glass · height 52 · radius 26 · insets 16 · 8 above the toolbar</td></tr>
+        <tr><td>Reply bar text</td><td class="v">"Replying to Name" SF Pro Semibold 13 / 18 · preview 15 / 20 one line</td></tr>
+        <tr><td>Close</td><td class="v">30×30 circle rgba(120,120,128,.16) in a 44×44 target · xmark 10</td></tr>
+      </table>
+    </section>
+  </div>
+
+  <section aria-label="Media quote example" style="display: flex; flex-direction: column; gap: 10px">
+    <h2 style="margin: 0; font-size: 16px; line-height: 21px; font-weight: 600">Media quote</h2>
+    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px">
+      <span style="font-size: 11px; line-height: 13px; color: rgba(60,60,67,0.6); padding: 0 12px">Alice replied to you</span>
+      <div role="img" aria-label="Photo thumbnail placeholder" style="width: 56px; height: 56px; border-radius: 12px; background: #D1D1D6; display: flex; align-items: center; justify-content: center">
+        <svg width="22" height="18" viewBox="0 0 22 18" aria-hidden="true"><rect x="1" y="1" width="20" height="16" rx="3" fill="none" stroke="#8E8E93" stroke-width="1.6"></rect><path d="m3 15 5-6 4 4 3-3 4 5" fill="none" stroke="#8E8E93" stroke-width="1.6" stroke-linejoin="round"></path></svg>
+      </div>
+      <div style="border-radius: 20px; padding: 9px 14px; font-size: 17px; line-height: 22px; background: #E9E9EA">That view though</div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":760,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

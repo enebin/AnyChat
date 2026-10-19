@@ -1,0 +1,95 @@
+name: QuickStart
+
+options:
+  bundleIdPrefix: io.github.enebin
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
+    SWIFT_APPROACHABLE_CONCURRENCY: YES
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+
+packages:
+  AnyChat:
+    path: ../..
+
+targets:
+  QuickStart:
+    type: application
+    platform: iOS
+    sources:
+      - path: QuickStart
+      - path: Shared
+    dependencies:
+      - package: AnyChat
+        product: AnyChatUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.enebin.quickstart
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        # The channel screen offers the camera only when the host app declares these.
+        INFOPLIST_KEY_NSCameraUsageDescription: Take photos and videos to send in a channel.
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Record sound with videos you send in a channel.
+        TARGETED_DEVICE_FAMILY: "1"
+
+  Showcase:
+    type: application
+    platform: iOS
+    sources:
+      - path: Showcase
+      - path: Shared
+    dependencies:
+      - package: AnyChat
+        product: AnyChatUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.enebin.showcase
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        # The channel screen offers the camera only when the host app declares these.
+        INFOPLIST_KEY_NSCameraUsageDescription: Take photos and videos to send in a channel.
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: Record sound with videos you send in a channel.
+        TARGETED_DEVICE_FAMILY: "1"
+
+  QuickStartUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: QuickStartUITests
+    dependencies:
+      - target: QuickStart
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.enebin.quickstart.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        # XCTestCase's overrides are nonisolated, so the project-wide MainActor
+        # default cannot apply here.
+        SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated
+
+schemes:
+  QuickStart:
+    build:
+      targets:
+        QuickStart: all
+        QuickStartUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - QuickStartUITests
+
+  Showcase:
+    build:
+      targets:
+        Showcase: all
+    run:
+      config: Debug

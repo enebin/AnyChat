@@ -1,0 +1,5 @@
+name = "ui-qa"
+description = "Independent rendered UI and interaction QA using the shared Claude agent definition."
+developer_instructions = """
+Read .claude/agents/ui-qa.md from the assigned repository root and follow its QA procedure and reporting contract. It is the canonical definition shared with Claude. Do not invoke the ui-qa dispatcher or spawn another QA agent.
+"""

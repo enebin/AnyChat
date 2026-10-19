@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Conversations list</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width: 402px; height: 874px; box-sizing: border-box; position: relative; display: flex; flex-direction: column; background: {{c.bg}}; color: {{c.label}}; font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif; overflow: hidden">
+  <header style="height: 167px; box-sizing: border-box; padding: 62px 16px 0 16px; display: flex; flex-direction: column; gap: 10px; flex-shrink: 0">
+    <div style="display: flex; justify-content: space-between">
+      <button aria-label="Filter" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; justify-content: center; padding: 0">
+        <svg width="18" height="14" viewBox="0 0 18 14" aria-hidden="true"><path d="M1 1h16M4 7h10M7 13h4" stroke="{{c.label}}" stroke-width="2" stroke-linecap="round"></path></svg>
+      </button>
+      <button aria-label="Compose" style="width: 44px; height: 44px; border-radius: 22px; border: none; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; justify-content: center; padding: 0">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M9 3H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M15.5 2.5l2 2L10 12l-3 1 1-3z" fill="none" stroke="{{c.label}}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path></svg>
+      </button>
+    </div>
+    <h1 style="margin: 0; font-size: 34px; line-height: 41px; font-weight: 700">Messages</h1>
+  </header>
+
+  <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+    <sc-for list="{{rows}}" as="row" hint-placeholder-count="8">
+      <li style="height: 79px; display: flex; position: relative">
+        <sc-if value="{{row.unread}}" hint-placeholder-val="{{false}}">
+          <span aria-label="Unread" style="position: absolute; left: 8px; top: 33.5px; width: 10px; height: 10px; border-radius: 5px; background: #0088FF"></span>
+        </sc-if>
+        <div aria-hidden="true" style="position: absolute; left: 26px; top: 16px; width: 45px; height: 45px; border-radius: 22.5px; background: linear-gradient(180deg, #A5ABB9, #858994); color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 600">{{row.initial}}</div>
+        <div style="position: absolute; left: 83px; right: 16px; top: 0; bottom: 0; box-shadow: 0 1px 0 {{c.separator}}">
+          <div style="position: absolute; left: 0; right: 0; top: 8px; display: flex; justify-content: space-between; align-items: baseline">
+            <span style="font-size: 17px; line-height: 22px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{row.name}}</span>
+            <span style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; font-size: 14px; line-height: 20px; color: {{c.secondary}}">{{row.time}}<svg width="7" height="12" viewBox="0 0 7 12" aria-hidden="true"><path d="m1 1 5 5-5 5" fill="none" stroke="{{c.tertiary}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>
+          </div>
+          <p style="position: absolute; left: 0; right: 0; top: 30px; margin: 0; font-size: 15px; line-height: 20px; color: {{c.secondary}}; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden">{{row.preview}}</p>
+        </div>
+      </li>
+    </sc-for>
+  </ul>
+
+  <footer style="position: absolute; left: 0; right: 0; top: 794px; height: 56px; display: flex; align-items: center; gap: 12px; padding: 4px 28px; box-sizing: border-box">
+    <label style="flex-grow: 1; height: 48px; border-radius: 24px; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; gap: 8px; padding: 0 16px; box-sizing: border-box">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="none" stroke="{{c.placeholder}}" stroke-width="1.8"></circle><path d="m11 11 4 4" stroke="{{c.placeholder}}" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Search</span>
+      <input placeholder="Search" style="flex-grow: 1; min-width: 0; border: none; background: transparent; font: inherit; font-size: 17px; color: {{c.label}}; outline: none">
+    </label>
+    <button aria-label="New message" style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 24px; border: none; background: {{c.glass}}; box-shadow: {{c.glassShadow}}; display: flex; align-items: center; justify-content: center; padding: 0">
+      <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M9 3H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M15.5 2.5l2 2L10 12l-3 1 1-3z" fill="none" stroke="{{c.label}}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path></svg>
+    </button>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"dark":{"editor":"boolean","default":false},"$preview":{"width":402,"height":874}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const dark = this.props.dark ?? false;
+    const c = dark ? {
+      bg: '#000000', label: '#FFFFFF', secondary: 'rgba(235,235,245,0.6)', tertiary: 'rgba(235,235,245,0.3)',
+      separator: 'rgba(84,84,88,0.65)', placeholder: 'rgba(235,235,245,0.6)',
+      glass: '#1C1C1E', glassShadow: '0 0 0 0.5px rgba(255,255,255,0.12), 0 4px 16px rgba(0,0,0,0.4)'
+    } : {
+      bg: '#FFFFFF', label: '#000000', secondary: 'rgba(60,60,67,0.6)', tertiary: 'rgba(60,60,67,0.3)',
+      separator: 'rgba(0,0,0,0.12)', placeholder: 'rgba(60,60,67,0.6)',
+      glass: '#FAFAFA', glassShadow: '0 0 0 0.5px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.08)'
+    };
+    const rows = [
+      { name: 'Alice', initial: 'A', time: '9:41 AM', unread: true, preview: 'Can we push lunch to 1? I have a call until 12:45.' },
+      { name: 'Design team', initial: 'D', time: '9:12 AM', unread: true, preview: 'Mina: Final mockups are in the shared folder. Take a look before standup.' },
+      { name: 'Bob', initial: 'B', time: 'Yesterday', unread: false, preview: 'Photo' },
+      { name: 'Grace', initial: 'G', time: 'Yesterday', unread: false, preview: 'Thanks! That fixed it.' },
+      { name: 'Lunch crew', initial: 'L', time: 'Tuesday', unread: false, preview: 'Same place again on Friday?' },
+      { name: 'Dan', initial: 'D', time: 'Monday', unread: false, preview: 'See you at the station' },
+      { name: 'Erin', initial: 'E', time: '10/12/26', unread: false, preview: 'Voice message' },
+      { name: 'Book club', initial: 'B', time: '10/9/26', unread: false, preview: 'Chapter four by Friday, please.' }
+    ];
+    return { c, rows };
+  }
+}
+</script>
+</body>
+</html>
