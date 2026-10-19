@@ -90,7 +90,13 @@ open QuickStart.xcodeproj
 
 ## MCP server
 
-`MCP/` holds an MCP server that guides a coding agent through adding AnyChat to an iOS app: setup, UI customization, and backend connection. How it works is in [`docs/architecture/mcp.md`](docs/architecture/mcp.md).
+`MCP/` holds an MCP server that guides a coding agent through adding AnyChat to an iOS app: setup, UI customization, and backend connection.
+
+```bash
+claude mcp add anychat -- npx -y anychat-mcp
+```
+
+Other clients and details are in [`MCP/README.md`](MCP/README.md). How it works is in [`docs/architecture/mcp.md`](docs/architecture/mcp.md).
 
 ## Contributing
 

@@ -1,9 +1,14 @@
 {
   "name": "anychat-mcp",
   "version": "0.1.0",
-  "private": true,
   "description": "MCP server that guides a coding agent through setting up AnyChat in an iOS app.",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enebin/AnyChat.git",
+    "directory": "MCP"
+  },
+  "homepage": "https://github.com/enebin/AnyChat#readme",
   "type": "module",
   "bin": {
     "anychat-mcp": "dist/src/index.js"
