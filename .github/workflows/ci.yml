@@ -1,7 +1,9 @@
 name: CI
 
-# Manual only: macOS runners bill at 10x on a private repo, so run this on release PRs instead of every push.
 on:
+  push:
+    branches: [main]
+  pull_request:
   workflow_dispatch:
 
 concurrency:
