@@ -1618,17 +1618,20 @@ final class ChannelListUITests: XCTestCase {
         hiddenHeader: Bool = false,
         questionToTop: Bool = false
     ) -> XCUIApplication {
+        let app = XCUIApplication()
+
         // A simulator signed into an Apple account raises system alerts that swallow every tap.
         // Button labels are localised, so dismiss by position rather than by title.
+        // XCUITest also reports the app's own modal views as interrupting alerts, the long-press
+        // overlay among them; tapping their first button would close them behind the test's back.
         addUIInterruptionMonitor(withDescription: "System dialog") { alert in
             MainActor.assumeIsolated {
-                guard alert.buttons.count > 0 else { return false }
+                guard app.alerts.count == 0, alert.buttons.count > 0 else { return false }
                 alert.buttons.element(boundBy: 0).tap()
                 return true
             }
         }
 
-        let app = XCUIApplication()
         app.launchEnvironment["QUICKSTART_CUSTOMIZATION_DEMO"] = customizations ? "1" : "0"
         app.launchEnvironment["QUICKSTART_OVERLAY_DEMO"] = overlay ? "1" : "0"
         app.launchEnvironment["QUICKSTART_SWITCH_DEMO"] = switchDemo ? "1" : "0"
