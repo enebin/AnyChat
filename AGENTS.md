@@ -155,8 +155,8 @@ cd MCP && npm run catalog:check
 
 ### Independent UI QA
 
-- Delegate rendered UI and interaction checks to the `ui-qa` subagent whenever a change affects appearance, layout, scrolling, keyboard/composer placement, or screen behavior, and whenever the user requests screen QA. Documentation-only and non-UI changes do not require it.
-- Invoke the workflow in [.claude/skills/ui-qa/SKILL.md](.claude/skills/ui-qa/SKILL.md). The canonical agent instructions live in [.claude/agents/ui-qa.md](.claude/agents/ui-qa.md). Codex discovers the same skill through the relative symlink `.agents/skills/ui-qa`; its native agent adapter only loads the canonical instructions. Do not maintain separate copies of QA instructions.
+- Rendered UI and interaction QA runs before each release and whenever the user requests screen QA (`qa.bundle: release` in `GROUNDWORK.md`). Every UI change still needs UI tests with screenshots that the implementer inspects.
+- Run it with `/groundwork:ui-qa`. Launch notes are under "UI QA notes" in `GROUNDWORK.md`. Do not keep repository copies of QA instructions.
 - The QA agent owns execution and evidence; the implementation agent owns source and test fixes. Give QA exclusive use of its simulator. After a UI fix, return the affected checks to QA against the rebuilt app.
 - Run each UI test once per build. The implementation agent runs the targeted UI tests and hands QA the `.xcresult` path with the commit and dirty state it was built from. QA reuses that result when its provenance matches the current tree and runs only the checks it does not cover. Neither side reruns a test the other already ran on the same build.
 - UI work is complete only when required checks pass and relevant screenshots have been inspected. A blocked or unavailable independent check must be reported as unverified, with its reason; do not claim QA passed. Keep code review and its Skeptic Review rules separate.
@@ -164,10 +164,10 @@ cd MCP && npm run catalog:check
 ## 작업 진행
 
 - 이슈 트래커는 GitHub Issues 다.
-- PR 하나로 끝나지 않는 작업은 부모 이슈 하나와 스텝별 sub-issue 로 나눈다. 분할과 이슈 생성은 `job-planning` 스킬이 한다.
+- PR 하나로 끝나지 않는 작업은 부모 이슈 하나와 스텝별 sub-issue 로 나눈다. 분할과 이슈 생성은 `/groundwork:plan` 이 한다.
 - 스텝 하나는 sub-issue 하나, PR 하나다. 각 스텝은 혼자 빌드되고 테스트가 통과해야 한다.
 - 진행 맥락(결정, 남은 일, 리뷰 라운드 결과)은 이슈에 남긴다. 세션이 바뀌어도 이슈만 읽고 이어갈 수 있어야 한다. 구조 결정은 이슈가 아니라 `ARCHITECTURE.md` 와 하위 문서에 반영한다.
-- 스텝 진행은 `step-loop` 스킬이 한다. 검증 명령 통과 → 리뷰 → 수정을 반복한다. 완료 기준은 검증 명령 통과와 리뷰에서 확인된 🔴/🟠 0 건이다. 🟡 와 nit 는 막지 않고 이슈에 남긴다. 3 라운드가 지나도 🔴/🟠 가 남으면 멈추고 묻는다.
+- 스텝 진행은 `/groundwork:step` 이 한다. 검증 명령 통과 → 리뷰 → 수정을 반복한다. 완료 기준은 검증 명령 통과와 리뷰에서 확인된 🔴/🟠 0 건이다. 🟡 와 nit 는 막지 않고 이슈에 남긴다. 3 라운드가 지나도 🔴/🟠 가 남으면 멈추고 묻는다.
 
 ## Git / GitHub
 
@@ -185,5 +185,56 @@ cd MCP && npm run catalog:check
 | `[DEL]` | 삭제 |
 
 - **커밋 메시지에 `Co-Authored-By` 트레일러를 절대 넣지 않는다.** "Generated with" 류의 문구도 넣지 않는다.
-- 기본 브랜치는 `main` 이다. 작업은 브랜치에서 하고, 커밋과 푸시는 사용자가 요청할 때만 한다.
+- 기본 브랜치는 `main`, 통합 브랜치는 `develop` 이다. 작업 브랜치는 `develop` 에서 따고 PR 도 `develop` 으로 연다. 릴리스는 `release/x.y.z` 를 거쳐 `main` 으로 간다. 커밋과 푸시는 사용자가 요청할 때만 한다.
 - PR 이 squash merge 되면 그 브랜치를 로컬과 원격에서 모두 지운다. squash 된 브랜치는 git 이 머지되지 않은 것으로 보므로, 지우기 전에 `gh pr view <branch>` 로 PR 이 `MERGED` 인지 확인하고 `git branch -D` 를 쓴다.
+
+<!-- groundwork:begin implementation -->
+## Implementation rules
+
+### Implementation and tests
+
+- A type that holds or transitions state is not merged without tests. Test each input for the normal path, the ignored case, the failure case, and a completion that arrives late. Pure logic (formatters, resolvers, parsers) is tested the same way. Display-only views are exempt.
+- Write each test as Given / When / Then. Name tests in plain language that states the behavior.
+- Do not hard-code the same literal across several assertions. Define it once as a test constant or helper.
+- Unit tests never reach a real backend, network service, or production data. Replace I/O at its boundary with a test double.
+- Do not wait with sleeps. Await async calls directly, or poll for the expected state with a bounded wait helper.
+- Write meaningful tests with behavior changes and regression tests for bug fixes. During implementation, run the affected tests. Before declaring work done, run every `verification.commands` entry and the required UI suite. Follow the effective groundwork mode for targeted versus full UI runs; no mode removes required tests or screenshot inspection.
+- Every changed screen has a UI test that attaches a screenshot. UI work is done only when the implementer has opened those screenshots and checked them. Checks no test can make go into the UI coverage ledger with the reason. A check may go to "Why QA must look" only when no UI test can make it, after considering all three ways: asserting a value (sizes, frames, visibility, text), launching with a different condition (dark appearance, largest text size, locale, an empty or error state), and attaching a screenshot that the implementer opens. The reason must say why each of the three fails. A missing test hook is not a reason: when a check needs one (a launch argument, an injectable clock or store), add it in debug or test builds only, then write the test. Only a rule in this document that forbids the hook lets the check go, and the reason names that rule. What remains is human judgment: whether wording reads naturally, whether a flow feels easy, how an animation feels.
+- Run each UI test once per build. Record the result path with the commit and dirty state it was built from, so later checks on the same build reuse it.
+- Keep compiler and type-checker warnings at zero. A new warning is a failure.
+- If any verification could not run (missing tool, no simulator), say which one and why in the work result. Report it as unverified. Never report it as passed.
+<!-- groundwork:end implementation -->
+
+<!-- groundwork:begin ci-gate -->
+### CI gate
+
+- Work is done only after every CI check on its pull request has passed. Local verification is required first, but it does not replace CI.
+- A PR with no CI checks is not done. Say so and ask; do not treat "no checks" as "checks passed".
+- A failing or flaky check is fixed at its root cause. Do not rerun until green, skip the check, or mark it optional to get through.
+- When CI fails and the same command passed locally, record the difference (environment, version, missing file) in the issue before fixing it.
+<!-- groundwork:end ci-gate -->
+
+<!-- groundwork:begin design-fidelity -->
+### Design fidelity
+
+The design source is `verification.design_source`. When a task names another source, that one wins for the task.
+
+- Read real values from the design source. Do not estimate them from a screenshot.
+  - Read each element's x / y / width / height. Derive paddings and gaps from the coordinate difference between sibling elements.
+  - Read colors and fonts from the source's token definitions, not from sampled pixels.
+  - Match: horizontal and vertical padding, gaps between elements, fixed sizes (avatars, icons, badges), divider insets, font size and weight.
+- After implementing, read the same elements again and compare. Where they differ, follow the source. If you keep a different value on purpose, give the reason in the PR body.
+- A value the source does not have (a new state, a new screen, a loading or empty or error view) is built from the nearest existing component's tokens and values. Add it to the design reference marked "new", with the reason.
+- If a value cannot be read, ask. Never fill in a color, font, or spacing by guessing.
+- Do not write color or font literals in view code. Use the project's tokens or theme. When a token is missing, add it to the token source first.
+<!-- groundwork:end design-fidelity -->
+
+<!-- groundwork:begin api-contract -->
+### Public API contract
+
+- Every public symbol has a doc comment that says what it does, and a since-version tag (for example `- Since: 1.0.0`).
+- An automated check compares the published API surface with the docs or component catalog. It runs in `verification.commands` and in CI. When a public symbol or its doc comment changes, regenerate the docs or catalog in the same PR.
+- Example code that ships with the library (README, guides, catalog examples) compiles with zero warnings against the current source. A changed example is compiled before merge.
+- Do not change the signature or access level of an existing public symbol. Add the new symbol, keep the old one working, and mark it deprecated with a pointer to the replacement. Remove it only in a major version.
+- Things a user must do before a component works (registration, configuration keys, permissions) are written in that component's doc comment.
+<!-- groundwork:end api-contract -->
