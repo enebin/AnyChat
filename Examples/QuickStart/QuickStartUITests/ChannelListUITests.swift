@@ -150,7 +150,7 @@ final class ChannelListUITests: XCTestCase {
         // Inside the bubble's leading padding and the button's circle, clear of their text and glyph.
         let bubblePoint = CGPoint(x: latest.frame.minX - 6, y: latest.frame.midY)
         let attachPoint = CGPoint(x: attach.frame.minX + 8, y: attach.frame.midY)
-        XCTAssertGreaterThan(try brightness(in: app, at: bubblePoint), lightSurfaceBrightness)
+        XCTAssertGreaterThan(try XCTUnwrap(brightness(in: app, at: bubblePoint)), lightSurfaceBrightness)
 
         // When
         XCUIDevice.shared.appearance = .dark
@@ -159,8 +159,8 @@ final class ChannelListUITests: XCTestCase {
         let redrawn = expectation(
             for: NSPredicate { _, _ in
                 MainActor.assumeIsolated {
-                    let bubble = (try? self.brightness(in: app, at: bubblePoint)) ?? 1
-                    let button = (try? self.brightness(in: app, at: attachPoint)) ?? 1
+                    let bubble = self.brightness(in: app, at: bubblePoint) ?? 1
+                    let button = self.brightness(in: app, at: attachPoint) ?? 1
                     return bubble < self.darkSurfaceBrightness && button < self.darkSurfaceBrightness
                 }
             },
@@ -1642,17 +1642,19 @@ final class ChannelListUITests: XCTestCase {
     }
 
     /// The mean of a screen pixel's red, green, and blue, from 0 to 1, at a point in the app's space.
+    /// `nil` when the screenshot has no image, which happens mid-transition. Not `XCTUnwrap`: it
+    /// records a failure even under `try?`, so one empty frame while polling failed the test.
     @MainActor
-    private func brightness(in app: XCUIApplication, at point: CGPoint) throws -> CGFloat {
-        let screen = try XCTUnwrap(app.screenshot().image.cgImage)
+    private func brightness(in app: XCUIApplication, at point: CGPoint) -> CGFloat? {
+        guard let screen = app.screenshot().image.cgImage else { return nil }
         let scale = CGFloat(screen.width) / app.frame.width
         let pixelRect = CGRect(x: (point.x * scale).rounded(.down), y: (point.y * scale).rounded(.down), width: 1, height: 1)
-        let pixel = try XCTUnwrap(screen.cropping(to: pixelRect))
+        guard let pixel = screen.cropping(to: pixelRect) else { return nil }
         var rgba = [UInt8](repeating: 0, count: 4)
-        let context = try XCTUnwrap(CGContext(
+        guard let context = CGContext(
             data: &rgba, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4,
             space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        ))
+        ) else { return nil }
         context.draw(pixel, in: CGRect(x: 0, y: 0, width: 1, height: 1))
         return CGFloat(Int(rgba[0]) + Int(rgba[1]) + Int(rgba[2])) / (3 * 255)
     }
