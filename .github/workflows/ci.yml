@@ -64,3 +64,17 @@ jobs:
         with:
           name: quickstart-xcresult-${{ matrix.shard }}
           path: ${{ runner.temp }}/quickstart.xcresult
+
+  mcp:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: MCP
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install dependencies
+        run: npm ci
+      - name: Test MCP server
+        run: npm test
+      - name: Check component catalog and examples
+        run: npm run catalog:check
