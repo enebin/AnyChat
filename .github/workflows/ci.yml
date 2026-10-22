@@ -29,8 +29,17 @@ jobs:
           name: package-xcresult
           path: ${{ runner.temp }}/package.xcresult
 
+  # The UI tests take about 25 minutes in one job, so they run on pull requests only, split
+  # across jobs by test name.
   quickstart:
+    if: github.event_name != 'push'
     runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
+    env:
+      SHARD_COUNT: 3
     defaults:
       run:
         working-directory: Examples/QuickStart
@@ -41,10 +50,17 @@ jobs:
       - name: Generate project
         run: xcodegen generate
       - name: Test demo app
-        run: xcodebuild test -project QuickStart.xcodeproj -scheme QuickStart -destination "$DESTINATION" -resultBundlePath "$RUNNER_TEMP/quickstart.xcresult"
+        run: |
+          tests=$(for file in QuickStartUITests/*.swift; do
+            class=$(sed -nE 's/.*class ([A-Za-z0-9_]+): XCTestCase.*/\1/p' "$file" | head -1)
+            [ -n "$class" ] && sed -nE "s|.*func (test[A-Za-z0-9_]+)\\(.*|-only-testing:QuickStartUITests/$class/\\1|p" "$file"
+          done | sort | awk -v count="$SHARD_COUNT" -v shard="${{ matrix.shard }}" '(NR - 1) % count == shard')
+          echo "$tests"
+          xcodebuild test -project QuickStart.xcodeproj -scheme QuickStart -destination "$DESTINATION" \
+            -resultBundlePath "$RUNNER_TEMP/quickstart.xcresult" $tests
       - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: quickstart-xcresult
+          name: quickstart-xcresult-${{ matrix.shard }}
           path: ${{ runner.temp }}/quickstart.xcresult
