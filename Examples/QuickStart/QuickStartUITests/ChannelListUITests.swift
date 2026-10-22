@@ -220,8 +220,7 @@ final class ChannelListUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts[firstChannelLatestMessage].waitForExistence(timeout: launchTimeout))
         let field = composerField(in: app)
         field.tap()
-        let keyboard = app.keyboards.firstMatch
-        XCTAssertTrue(keyboard.waitForExistence(timeout: launchTimeout))
+        let keyboard = waitForRisenKeyboard(in: app)
         let singleLineHeight = field.frame.height
         let draft = "First line\nSecond line\nThird line\nFourth line"
 
@@ -687,8 +686,7 @@ final class ChannelListUITests: XCTestCase {
         field.typeText(sentText)
 
         // Then
-        let keyboard = app.keyboards.firstMatch
-        XCTAssertTrue(keyboard.waitForExistence(timeout: launchTimeout))
+        let keyboard = waitForRisenKeyboard(in: app)
         XCTAssertLessThanOrEqual(field.frame.maxY, keyboard.frame.minY)
         attachScreenshot(of: app, named: "Composer with text")
 
@@ -741,8 +739,7 @@ final class ChannelListUITests: XCTestCase {
         field.typeText(sentText)
 
         // Then
-        let keyboard = app.keyboards.firstMatch
-        XCTAssertTrue(keyboard.waitForExistence(timeout: launchTimeout))
+        let keyboard = waitForRisenKeyboard(in: app)
         XCTAssertTrue(emptyView.isHittable)
         XCTAssertLessThanOrEqual(emptyView.frame.maxY, field.frame.minY)
         XCTAssertLessThanOrEqual(field.frame.maxY, keyboard.frame.minY)
@@ -786,8 +783,7 @@ final class ChannelListUITests: XCTestCase {
         let emptyView = app.descendants(matching: .any)[emptyState]
         XCTAssertTrue(emptyView.waitForExistence(timeout: launchTimeout))
         composerField(in: app).tap()
-        let keyboard = app.keyboards.firstMatch
-        XCTAssertTrue(keyboard.waitForExistence(timeout: launchTimeout))
+        let keyboard = waitForRisenKeyboard(in: app)
 
         // When
         let window = app.windows.firstMatch.frame
@@ -949,7 +945,7 @@ final class ChannelListUITests: XCTestCase {
         let bar = app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", replyBarTitle)).firstMatch
         XCTAssertTrue(bar.waitForExistence(timeout: launchTimeout))
         XCTAssertTrue(app.buttons["Cancel reply"].exists)
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: launchTimeout))
+        waitForRisenKeyboard(in: app)
         attachScreenshot(of: app, named: "Reply bar")
 
         // When
@@ -1011,7 +1007,7 @@ final class ChannelListUITests: XCTestCase {
         latest.press(forDuration: longPressDuration)
         app.buttons["Reply"].tap()
         let field = composerField(in: app)
-        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: launchTimeout))
+        waitForRisenKeyboard(in: app)
         field.typeText(sentText)
 
         // When
@@ -1592,6 +1588,27 @@ final class ChannelListUITests: XCTestCase {
     private func composerField(in app: XCUIApplication) -> XCUIElement {
         let textView = app.textViews["Message"]
         return textView.exists ? textView : app.textFields["Message"]
+    }
+
+    /// With the simulator's hardware keyboard connected, the software keyboard never rises, yet its
+    /// element still exists below the screen. Waiting for existence alone let keyboard checks pass
+    /// or fail for the wrong reason.
+    @MainActor
+    @discardableResult
+    private func waitForRisenKeyboard(in app: XCUIApplication) -> XCUIElement {
+        let keyboard = app.keyboards.firstMatch
+        let screenBottom = app.windows.firstMatch.frame.maxY
+        // Not `isHittable`: a risen keyboard under the reply transition still reports false.
+        let onScreen = NSPredicate { _, _ in
+            MainActor.assumeIsolated { keyboard.exists && keyboard.frame.minY < screenBottom }
+        }
+        let risen = XCTNSPredicateExpectation(predicate: onScreen, object: nil)
+        XCTAssertEqual(
+            XCTWaiter.wait(for: [risen], timeout: launchTimeout),
+            .completed,
+            "The software keyboard did not rise. In Simulator, turn off I/O > Keyboard > Connect Hardware Keyboard."
+        )
+        return keyboard
     }
 
     /// The simulator's sample photos are JPEG or HEIC files.
