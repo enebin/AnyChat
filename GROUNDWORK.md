@@ -126,6 +126,6 @@ mode: normal
 - Integration branch `develop` was created from `main` for the develop-release workflow.
 - CI runs on pull requests and on pushes to `main`; pull requests into `develop` get CI, which the CI gate relies on.
 - CI's `mcp` job runs `MCP tests` and `MCP catalog check`, as the Public API contract rule requires.
-- Full UI suite at onboarding (`main` d860575): 51 passed, 1 skipped (`testPickingAPhotoSendsIt`: the iOS 26 simulator cannot load picked photos), 1 failed. `testEmptyChannelDragDismissesTheKeyboardAndTheSlotSends` fails at `ChannelListUITests.swift:800`: the keyboard stays up after the drag. It also fails when run alone. Treat it as a known failure to fix, not as a pass.
+- Full UI suite at onboarding (`main` d860575): 51 passed, 1 skipped (`testPickingAPhotoSendsIt`: the iOS 26 simulator cannot load picked photos), 1 failed. `testSwitchingToDarkRedrawsAnOpenChannel` fails on CI and on a fresh simulator; its cause is not yet investigated. Run UI tests with the simulator's hardware keyboard off (I/O > Keyboard > Connect Hardware Keyboard); with it on, the software keyboard never rises and the keyboard tests fail.
 - Architecture follows the existing `ARCHITECTURE.md`, which matches the unidirectional bundle; onboarding added only the minimal-structure block.
 - QA is release: before each release, `ui-qa --full` and `ux-review --full` (Messaging app user) run on the release candidate. `review.release_qa: true` is its compatibility mirror.
