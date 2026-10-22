@@ -150,7 +150,7 @@ final class ChannelListUITests: XCTestCase {
         // Inside the bubble's leading padding and the button's circle, clear of their text and glyph.
         let bubblePoint = CGPoint(x: latest.frame.minX - 6, y: latest.frame.midY)
         let attachPoint = CGPoint(x: attach.frame.minX + 8, y: attach.frame.midY)
-        XCTAssertGreaterThan(try brightness(in: app, at: bubblePoint), lightSurfaceBrightness)
+        XCTAssertGreaterThan(try XCTUnwrap(brightness(in: app, at: bubblePoint)), lightSurfaceBrightness)
 
         // When
         XCUIDevice.shared.appearance = .dark
@@ -159,8 +159,8 @@ final class ChannelListUITests: XCTestCase {
         let redrawn = expectation(
             for: NSPredicate { _, _ in
                 MainActor.assumeIsolated {
-                    let bubble = (try? self.brightness(in: app, at: bubblePoint)) ?? 1
-                    let button = (try? self.brightness(in: app, at: attachPoint)) ?? 1
+                    let bubble = self.brightness(in: app, at: bubblePoint) ?? 1
+                    let button = self.brightness(in: app, at: attachPoint) ?? 1
                     return bubble < self.darkSurfaceBrightness && button < self.darkSurfaceBrightness
                 }
             },
@@ -179,7 +179,7 @@ final class ChannelListUITests: XCTestCase {
             let channel = app.staticTexts[name]
             XCTAssertTrue(app.staticTexts[firstChannelName].waitForExistence(timeout: launchTimeout))
             for _ in 0..<maxScrolls where !channel.isHittable {
-                app.swipeUp()
+                app.swipeUp(velocity: .fast)
             }
             XCTAssertTrue(channel.isHittable)
             channel.tap()
@@ -191,7 +191,7 @@ final class ChannelListUITests: XCTestCase {
 
             // When
             for _ in 0..<maxScrolls where !created.isHittable {
-                list.swipeDown()
+                list.swipeDown(velocity: .fast)
             }
             XCTAssertTrue(created.isHittable)
             list.swipeDown()
@@ -285,7 +285,7 @@ final class ChannelListUITests: XCTestCase {
         let channel = app.staticTexts[frozenChannelName]
         XCTAssertTrue(app.staticTexts[firstChannelName].waitForExistence(timeout: launchTimeout))
         for _ in 0..<maxScrolls where !channel.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
         let preview = app.staticTexts[frozenChannelPreview]
         XCTAssertTrue(preview.isHittable)
@@ -327,7 +327,7 @@ final class ChannelListUITests: XCTestCase {
         XCTAssertEqual(latest.frame.minY, yBefore, accuracy: maxAnchorDrift)
         let secondPageLast = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", secondPageLastMessagePrefix)).firstMatch
         for _ in 0..<maxScrolls where !secondPageLast.exists {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
         XCTAssertTrue(secondPageLast.exists)
     }
@@ -385,7 +385,7 @@ final class ChannelListUITests: XCTestCase {
         XCTAssertEqual(reading.frame.minY, yBefore, accuracy: maxAnchorDrift)
         let complete = app.staticTexts.matching(NSPredicate(format: "label == %@", streamedReply)).firstMatch
         for _ in 0..<maxScrolls where !complete.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
         XCTAssertTrue(complete.isHittable)
     }
@@ -431,7 +431,7 @@ final class ChannelListUITests: XCTestCase {
         let jump = app.buttons[jumpToLatestButton]
         XCTAssertFalse(jump.exists)
         for _ in 0..<maxScrolls where !jump.exists {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
         XCTAssertTrue(jump.exists)
         XCTAssertFalse(latest.isHittable)
@@ -506,7 +506,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !firstMessage.isHittable {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
 
         // Then
@@ -579,7 +579,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !last.exists {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
 
         // Then
@@ -662,7 +662,7 @@ final class ChannelListUITests: XCTestCase {
             .matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", replyQuoteLine, replyQuotedText))
             .firstMatch
         for _ in 0..<maxScrolls where !(quote.exists && quote.isHittable) {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
 
         // Then
@@ -987,7 +987,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !latest.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
         // `swipeRight()` travels only the bubble's width, which is less than the threshold.
         let start = latest.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
@@ -1149,7 +1149,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !created.isHittable {
-            list.swipeDown()
+            list.swipeDown(velocity: .fast)
         }
         XCTAssertTrue(created.isHittable)
         list.swipeDown()
@@ -1475,7 +1475,7 @@ final class ChannelListUITests: XCTestCase {
         let channel = app.staticTexts[frozenChannelName]
         XCTAssertTrue(app.staticTexts[firstChannelName].waitForExistence(timeout: launchTimeout))
         for _ in 0..<maxScrolls where !channel.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
 
         // When
@@ -1490,7 +1490,7 @@ final class ChannelListUITests: XCTestCase {
         // When
         let firstMessage = app.staticTexts[frozenChannelCreatedMessage]
         for _ in 0..<maxScrolls where !firstMessage.isHittable {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
 
         // Then
@@ -1642,17 +1642,19 @@ final class ChannelListUITests: XCTestCase {
     }
 
     /// The mean of a screen pixel's red, green, and blue, from 0 to 1, at a point in the app's space.
+    /// `nil` when the screenshot has no image, which happens mid-transition. Not `XCTUnwrap`: it
+    /// records a failure even under `try?`, so one empty frame while polling failed the test.
     @MainActor
-    private func brightness(in app: XCUIApplication, at point: CGPoint) throws -> CGFloat {
-        let screen = try XCTUnwrap(app.screenshot().image.cgImage)
+    private func brightness(in app: XCUIApplication, at point: CGPoint) -> CGFloat? {
+        guard let screen = app.screenshot().image.cgImage else { return nil }
         let scale = CGFloat(screen.width) / app.frame.width
         let pixelRect = CGRect(x: (point.x * scale).rounded(.down), y: (point.y * scale).rounded(.down), width: 1, height: 1)
-        let pixel = try XCTUnwrap(screen.cropping(to: pixelRect))
+        guard let pixel = screen.cropping(to: pixelRect) else { return nil }
         var rgba = [UInt8](repeating: 0, count: 4)
-        let context = try XCTUnwrap(CGContext(
+        guard let context = CGContext(
             data: &rgba, width: 1, height: 1, bitsPerComponent: 8, bytesPerRow: 4,
             space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        ))
+        ) else { return nil }
         context.draw(pixel, in: CGRect(x: 0, y: 0, width: 1, height: 1))
         return CGFloat(Int(rgba[0]) + Int(rgba[1]) + Int(rgba[2])) / (3 * 255)
     }
