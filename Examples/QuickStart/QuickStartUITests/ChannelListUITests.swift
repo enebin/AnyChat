@@ -179,7 +179,7 @@ final class ChannelListUITests: XCTestCase {
             let channel = app.staticTexts[name]
             XCTAssertTrue(app.staticTexts[firstChannelName].waitForExistence(timeout: launchTimeout))
             for _ in 0..<maxScrolls where !channel.isHittable {
-                app.swipeUp()
+                app.swipeUp(velocity: .fast)
             }
             XCTAssertTrue(channel.isHittable)
             channel.tap()
@@ -191,7 +191,7 @@ final class ChannelListUITests: XCTestCase {
 
             // When
             for _ in 0..<maxScrolls where !created.isHittable {
-                list.swipeDown()
+                list.swipeDown(velocity: .fast)
             }
             XCTAssertTrue(created.isHittable)
             list.swipeDown()
@@ -285,7 +285,7 @@ final class ChannelListUITests: XCTestCase {
         let channel = app.staticTexts[frozenChannelName]
         XCTAssertTrue(app.staticTexts[firstChannelName].waitForExistence(timeout: launchTimeout))
         for _ in 0..<maxScrolls where !channel.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
         let preview = app.staticTexts[frozenChannelPreview]
         XCTAssertTrue(preview.isHittable)
@@ -327,7 +327,7 @@ final class ChannelListUITests: XCTestCase {
         XCTAssertEqual(latest.frame.minY, yBefore, accuracy: maxAnchorDrift)
         let secondPageLast = app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", secondPageLastMessagePrefix)).firstMatch
         for _ in 0..<maxScrolls where !secondPageLast.exists {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
         XCTAssertTrue(secondPageLast.exists)
     }
@@ -385,7 +385,7 @@ final class ChannelListUITests: XCTestCase {
         XCTAssertEqual(reading.frame.minY, yBefore, accuracy: maxAnchorDrift)
         let complete = app.staticTexts.matching(NSPredicate(format: "label == %@", streamedReply)).firstMatch
         for _ in 0..<maxScrolls where !complete.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
         XCTAssertTrue(complete.isHittable)
     }
@@ -431,7 +431,7 @@ final class ChannelListUITests: XCTestCase {
         let jump = app.buttons[jumpToLatestButton]
         XCTAssertFalse(jump.exists)
         for _ in 0..<maxScrolls where !jump.exists {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
         XCTAssertTrue(jump.exists)
         XCTAssertFalse(latest.isHittable)
@@ -506,7 +506,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !firstMessage.isHittable {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
 
         // Then
@@ -579,7 +579,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !last.exists {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
 
         // Then
@@ -662,7 +662,7 @@ final class ChannelListUITests: XCTestCase {
             .matching(NSPredicate(format: "label CONTAINS %@ AND label CONTAINS %@", replyQuoteLine, replyQuotedText))
             .firstMatch
         for _ in 0..<maxScrolls where !(quote.exists && quote.isHittable) {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
 
         // Then
@@ -987,7 +987,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !latest.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
         // `swipeRight()` travels only the bubble's width, which is less than the threshold.
         let start = latest.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
@@ -1149,7 +1149,7 @@ final class ChannelListUITests: XCTestCase {
 
         // When
         for _ in 0..<maxScrolls where !created.isHittable {
-            list.swipeDown()
+            list.swipeDown(velocity: .fast)
         }
         XCTAssertTrue(created.isHittable)
         list.swipeDown()
@@ -1475,7 +1475,7 @@ final class ChannelListUITests: XCTestCase {
         let channel = app.staticTexts[frozenChannelName]
         XCTAssertTrue(app.staticTexts[firstChannelName].waitForExistence(timeout: launchTimeout))
         for _ in 0..<maxScrolls where !channel.isHittable {
-            app.swipeUp()
+            app.swipeUp(velocity: .fast)
         }
 
         // When
@@ -1490,7 +1490,7 @@ final class ChannelListUITests: XCTestCase {
         // When
         let firstMessage = app.staticTexts[frozenChannelCreatedMessage]
         for _ in 0..<maxScrolls where !firstMessage.isHittable {
-            app.swipeDown()
+            app.swipeDown(velocity: .fast)
         }
 
         // Then
