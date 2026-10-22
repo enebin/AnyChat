@@ -119,6 +119,7 @@ UI 의 시각적 기준인 **디자인 원본**은 iOS 26 메시지 앱 UI 키�
 - UI 테스트 타겟은 `SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated` 를 쓴다. 프로젝트 기본값인 MainActor 를 두면 `XCTestCase` 의 nonisolated 오버라이드와 격리 수준이 어긋나 컴파일되지 않는다.
 - `UserDefaults` 를 실행 인자(`-key value`)로 덮어 초기 상태를 만들지 않는다. 인자 도메인이 앱이 쓴 값보다 우선이라 화면에서 입력해도 값이 바뀌지 않는다. 상태는 화면에서 직접 만든다.
 - Apple 계정에 로그인된 시뮬레이터는 시스템 알림을 띄워 탭을 가로챈다. `addUIInterruptionMonitor` 로 넘기되 버튼 제목은 지역화되므로 위치로 누른다.
+- 시뮬레이터의 하드웨어 키보드 연결(Simulator 메뉴 I/O > Keyboard > Connect Hardware Keyboard)은 끄고 돌린다. 켜져 있으면 소프트웨어 키보드가 올라오지 않아 키보드를 쓰는 테스트가 실패한다. 키보드를 기다릴 때는 존재만 보지 말고 `waitForRisenKeyboard(in:)` 로 화면에 올라왔는지 확인한다.
 - UI 테스트는 데모 앱의 메모리 샘플 백엔드로 돌아 네트워크가 필요 없다. 네트워크가 필요한 테스트를 더하면 문서 주석에 그렇다고 적는다.
 - 화면을 검증한 테스트는 `XCTAttachment(screenshot:)` 으로 스크린샷을 남긴다. 디자인 원본과 대조할 근거가 된다.
 - 전체 스위트는 몇 분이 걸린다. 고치는 동안에는 바뀐 화면을 덮는 테스트만 `-only-testing` 으로 돌리고, 전체 스위트는 스텝을 끝내기 전에 한 번만 돌린다.
