@@ -1670,13 +1670,16 @@ final class ChannelListUITests: XCTestCase {
         return app
     }
 
-    /// The mean of a screen pixel's red, green, and blue, from 0 to 1, at a point in the app's space.
-    /// `nil` when the screenshot has no image, which happens mid-transition. Not `XCTUnwrap`: it
-    /// records a failure even under `try?`, so one empty frame while polling failed the test.
+    /// The mean of a screen pixel's red, green, and blue, from 0 to 1, at a point in the app's space,
+    /// which fills the screen. `nil` when the screenshot has no image, which happens mid-transition.
+    /// The screen is captured rather than the app: on CI the app's frame can turn empty around an
+    /// appearance switch, and `app.screenshot()` then records a failure. Not `XCTUnwrap` either: it
+    /// records a failure even under `try?`.
     @MainActor
     private func brightness(in app: XCUIApplication, at point: CGPoint) -> CGFloat? {
-        guard let screen = app.screenshot().image.cgImage else { return nil }
-        let scale = CGFloat(screen.width) / app.frame.width
+        let image = XCUIScreen.main.screenshot().image
+        guard let screen = image.cgImage, image.size.width > 0 else { return nil }
+        let scale = CGFloat(screen.width) / image.size.width
         let pixelRect = CGRect(x: (point.x * scale).rounded(.down), y: (point.y * scale).rounded(.down), width: 1, height: 1)
         guard let pixel = screen.cropping(to: pixelRect) else { return nil }
         var rgba = [UInt8](repeating: 0, count: 4)
