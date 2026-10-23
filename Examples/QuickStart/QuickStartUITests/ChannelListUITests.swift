@@ -150,23 +150,35 @@ final class ChannelListUITests: XCTestCase {
         // Inside the bubble's leading padding and the button's circle, clear of their text and glyph.
         let bubblePoint = CGPoint(x: latest.frame.minX - 6, y: latest.frame.midY)
         let attachPoint = CGPoint(x: attach.frame.minX + 8, y: attach.frame.midY)
+        let back = app.navigationBars.buttons["BackButton"]
+        XCTAssertTrue(back.exists)
+        let backPoint = CGPoint(x: back.frame.minX + 6, y: back.frame.midY)
         XCTAssertGreaterThan(try XCTUnwrap(brightness(in: app, at: bubblePoint)), lightSurfaceBrightness)
+        XCTAssertGreaterThan(try XCTUnwrap(brightness(in: app, at: backPoint)), lightSurfaceBrightness)
 
         // When
         XCUIDevice.shared.appearance = .dark
 
         // Then
-        let redrawn = expectation(
-            for: NSPredicate { _, _ in
+        let redrawn = XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
                 MainActor.assumeIsolated {
                     let bubble = self.brightness(in: app, at: bubblePoint) ?? 1
                     let button = self.brightness(in: app, at: attachPoint) ?? 1
                     return bubble < self.darkSurfaceBrightness && button < self.darkSurfaceBrightness
                 }
             },
-            evaluatedWith: nil
+            object: nil
         )
-        wait(for: [redrawn], timeout: launchTimeout)
+        if XCTWaiter.wait(for: [redrawn], timeout: launchTimeout) != .completed {
+            // On CI the simulator sometimes never applies the switch: the whole app, the system's
+            // own back button included, stays light for a minute. Then nothing about the kit can
+            // be judged. A back button that did turn dark means the kit alone stayed light.
+            if (brightness(in: app, at: backPoint) ?? 1) > lightSurfaceBrightness {
+                throw XCTSkip("The simulator did not apply the dark appearance.")
+            }
+            XCTFail("The open channel stayed light after the system switched to dark.")
+        }
         attachScreenshot(of: app, named: "Messages conversation switched to dark")
     }
 
@@ -1658,13 +1670,16 @@ final class ChannelListUITests: XCTestCase {
         return app
     }
 
-    /// The mean of a screen pixel's red, green, and blue, from 0 to 1, at a point in the app's space.
-    /// `nil` when the screenshot has no image, which happens mid-transition. Not `XCTUnwrap`: it
-    /// records a failure even under `try?`, so one empty frame while polling failed the test.
+    /// The mean of a screen pixel's red, green, and blue, from 0 to 1, at a point in the app's space,
+    /// which fills the screen. `nil` when the screenshot has no image, which happens mid-transition.
+    /// The screen is captured rather than the app: on CI the app's frame can turn empty around an
+    /// appearance switch, and `app.screenshot()` then records a failure. Not `XCTUnwrap` either: it
+    /// records a failure even under `try?`.
     @MainActor
     private func brightness(in app: XCUIApplication, at point: CGPoint) -> CGFloat? {
-        guard let screen = app.screenshot().image.cgImage else { return nil }
-        let scale = CGFloat(screen.width) / app.frame.width
+        let image = XCUIScreen.main.screenshot().image
+        guard let screen = image.cgImage, image.size.width > 0 else { return nil }
+        let scale = CGFloat(screen.width) / image.size.width
         let pixelRect = CGRect(x: (point.x * scale).rounded(.down), y: (point.y * scale).rounded(.down), width: 1, height: 1)
         guard let pixel = screen.cropping(to: pixelRect) else { return nil }
         var rgba = [UInt8](repeating: 0, count: 4)
