@@ -29,10 +29,11 @@ jobs:
           name: package-xcresult
           path: ${{ runner.temp }}/package.xcresult
 
-  # The UI tests take about 25 minutes in one job, so they run on pull requests only, split
-  # across jobs by test name.
+  # The UI tests take about 25 minutes in one job, so they run only on release pull requests into
+  # main (or by hand), split across jobs by test name. Steps run the full suite locally before
+  # they finish.
   quickstart:
-    if: github.event_name != 'push'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'pull_request' && github.base_ref == 'main')
     runs-on: macos-26
     strategy:
       fail-fast: false

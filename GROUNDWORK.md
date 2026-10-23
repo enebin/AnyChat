@@ -125,6 +125,7 @@ mode: normal
 - GitHub closes issues on merge: no — integration branch is not the default branch.
 - Integration branch `develop` was created from `main` for the develop-release workflow.
 - CI runs on pull requests and on pushes to `main`; pull requests into `develop` get CI, which the CI gate relies on.
+- CI's `quickstart` UI tests run only on pull requests into `main` (release PRs) or by hand, to keep step PRs fast. For a PR into `develop`, the CI gate covers `package` and `mcp`; the full UI suite comes from the step's local run before it finishes.
 - CI's `mcp` job runs `MCP tests` and `MCP catalog check`, as the Public API contract rule requires.
 - Full UI suite at onboarding (`main` d860575): 51 passed, 1 skipped (`testPickingAPhotoSendsIt`: the iOS 26 simulator cannot load picked photos), 1 failed. `testSwitchingToDarkRedrawsAnOpenChannel` fails on CI and on a fresh simulator; its cause is not yet investigated. Run UI tests with the simulator's hardware keyboard off (I/O > Keyboard > Connect Hardware Keyboard); with it on, the software keyboard never rises and the keyboard tests fail.
 - Architecture follows the existing `ARCHITECTURE.md`, which matches the unidirectional bundle; onboarding added only the minimal-structure block.
