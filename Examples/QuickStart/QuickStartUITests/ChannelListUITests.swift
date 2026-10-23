@@ -150,23 +150,35 @@ final class ChannelListUITests: XCTestCase {
         // Inside the bubble's leading padding and the button's circle, clear of their text and glyph.
         let bubblePoint = CGPoint(x: latest.frame.minX - 6, y: latest.frame.midY)
         let attachPoint = CGPoint(x: attach.frame.minX + 8, y: attach.frame.midY)
+        let back = app.navigationBars.buttons["BackButton"]
+        XCTAssertTrue(back.exists)
+        let backPoint = CGPoint(x: back.frame.minX + 6, y: back.frame.midY)
         XCTAssertGreaterThan(try XCTUnwrap(brightness(in: app, at: bubblePoint)), lightSurfaceBrightness)
+        XCTAssertGreaterThan(try XCTUnwrap(brightness(in: app, at: backPoint)), lightSurfaceBrightness)
 
         // When
         XCUIDevice.shared.appearance = .dark
 
         // Then
-        let redrawn = expectation(
-            for: NSPredicate { _, _ in
+        let redrawn = XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
                 MainActor.assumeIsolated {
                     let bubble = self.brightness(in: app, at: bubblePoint) ?? 1
                     let button = self.brightness(in: app, at: attachPoint) ?? 1
                     return bubble < self.darkSurfaceBrightness && button < self.darkSurfaceBrightness
                 }
             },
-            evaluatedWith: nil
+            object: nil
         )
-        wait(for: [redrawn], timeout: launchTimeout)
+        if XCTWaiter.wait(for: [redrawn], timeout: launchTimeout) != .completed {
+            // On CI the simulator sometimes never applies the switch: the whole app, the system's
+            // own back button included, stays light for a minute. Then nothing about the kit can
+            // be judged. A back button that did turn dark means the kit alone stayed light.
+            if (brightness(in: app, at: backPoint) ?? 1) > lightSurfaceBrightness {
+                throw XCTSkip("The simulator did not apply the dark appearance.")
+            }
+            XCTFail("The open channel stayed light after the system switched to dark.")
+        }
         attachScreenshot(of: app, named: "Messages conversation switched to dark")
     }
 
